@@ -6,7 +6,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Listing</title>
 
-    <link href="styles.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #f1f1f1;
+            font-family: Arial, Helvetica, sans-serif
+        }
+
+        #content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 100px;
+        }
+
+        #sortBy {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 5px 0px;
+        }
+
+        #sortBy button {
+            margin: 0px 5px;
+        }
+
+        #products {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .product {
+            margin: 10px;
+            box-shadow: 0px 0px 8px 0px grey;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .productImg {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            object-position: center;
+            border-bottom: 1px solid #f1f1f1;
+        }
+
+        .producDetails {
+            padding: 5px;
+        }
+
+        .productName {
+            font-size: 16px;
+            font-weight: bolder;
+        }
+
+        .productDesc {
+            font-size: 12px;
+        }
+    </style>
 </head>
 
 <body>
@@ -26,7 +85,190 @@
 
     <div id="products"></div>
 
-    <script type="module" src="script.js"> </script>
+    <script type="module">
+        // utils.js
+        function memoizeIt(func) {
+            const memo = {};
+
+            return function(...args) {
+                const key = JSON.stringify(args);
+
+                if (!memo.hasOwnProperty(key)) memo[key] = func.call(this, ...args);
+
+                return memo[key];
+            }
+        }
+
+        function debounce(func, delay) {
+            let timer;
+
+            return function(...args) {
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                    func.call(this, ...args)
+                }, delay);
+            }
+        }
+
+        function apiCall(apiUrl, method = "get", body) {
+            return new Promise(async function(resolve, reject) {
+                try {
+                    const resp = await fetch(apiUrl, {
+                        method,
+                        ...(method !== "get" ? { body: JSON.stringify(body) } : {})
+                    })
+
+                    const jsonResp = await resp.json();
+                    resolve(jsonResp)
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        }
+
+
+        // helpers.js
+        function filterProducts(products, tag) {
+            return products.filter(item => (item.tags).includes(tag));
+        }
+        const filterProductsOP = memoizeIt(filterProducts);
+
+
+        function sortProducts(products, type) {
+            return products.sort((a, b) => {
+                if (type === "rating") return b[type] > a[type];
+                if (type === "name") return a[type] > b[type];
+                return a[type] - b[type];
+            });
+        }
+        const sortProductsOP = memoizeIt(sortProducts);
+
+
+        function searchProducts(products, query) {
+            console.log("searchProducts", query)
+            return products.filter(item => (item.name).toLowerCase().includes(query.toLowerCase()));
+        }
+        const searchProductsOP = memoizeIt(searchProducts);
+
+
+        // index.js
+        const productsEle = document.getElementById("products");
+        const searchInputEle = document.getElementById("searchInput");
+        const sortByEle = document.getElementById("sortBy");
+        const filterEle = document.getElementById("filter");
+
+        filterEle.addEventListener("change", handleFilterChange);
+
+        sortByEle.addEventListener("click", handleSortClick);
+
+        const handleInputChangeOP = debounce(handleInputChange, 400);
+        searchInputEle.addEventListener("keyup", handleInputChangeOP);
+
+        let products, filters = [];
+
+        function loadApp() {
+            apiCall("https://jsonblob.com/api/1182874240105177088")
+                .then(data => {
+                    products = data;
+                    renderProducts(data);
+                })
+                .catch(error => {
+                    console.log("error", error);
+                });
+        }
+        loadApp();
+
+        function renderProducts(products, selectedFilterValue) {
+            const tempEle = document.createElement("div");
+
+            let tempSet = new Set();
+            products.forEach(element => {
+                const prodEle = document.createElement("div");
+                prodEle.classList.add("product");
+
+                const prodImgEle = document.createElement("img");
+                prodImgEle.classList.add("productImg");
+                prodImgEle.src = element.img;
+                prodImgEle.alt = "prod img";
+
+                const prodDetailsEle = document.createElement("div");
+                prodDetailsEle.classList.add("producDetails");
+
+                const prodNameEle = document.createElement("div");
+                prodNameEle.classList.add("productName");
+                prodNameEle.innerText = element.name;
+
+                const prodDescEle = document.createElement("div");
+                prodDescEle.classList.add("productDesc");
+                prodDescEle.innerText = element.rating + " | " + element.eta + " mins";
+
+                prodDetailsEle.appendChild(prodNameEle);
+                prodDetailsEle.appendChild(prodDescEle);
+
+                prodEle.appendChild(prodImgEle);
+                prodEle.appendChild(prodDetailsEle);
+                tempEle.append(prodEle);
+
+
+                tempSet = new Set([...tempSet, ...(element.tags || [])])
+            });
+            productsEle.innerHTML = tempEle.innerHTML;
+
+            // rendering filter options in select field
+            filters = Array.from(tempSet);
+            renderFilterOptions(filters, selectedFilterValue || "");
+        }
+
+        function renderFilterOptions(filters, selectedValue) {
+            const tempEle = document.createElement("div");
+            const optionEle = document.createElement("option");
+            optionEle.value = "";
+            optionEle.innerText = "";
+            tempEle.append(optionEle);
+
+            filters.forEach(filter => {
+                const optionEle = document.createElement("option");
+                optionEle.value = filter;
+                optionEle.innerText = filter;
+                optionEle.defaultSelected = filter === selectedValue;
+
+                tempEle.append(optionEle);
+            });
+
+            filterEle.innerHTML = tempEle.innerHTML;
+        }
+
+        function handleFilterChange(e) {
+            const val = e.target.value;
+
+            if (val) {
+                const filteredResults = filterProductsOP(products, val);
+                renderProducts(filteredResults, val);
+            } else {
+                renderProducts(products);
+            }
+        }
+
+        function handleInputChange(e) {
+            const val = e.target.value;
+
+            if (val) {
+                const searchResults = searchProductsOP(products, val);
+                renderProducts(searchResults);
+            } else {
+                renderProducts(products);
+            }
+        }
+
+        function handleSortClick(e) {
+            const type = e.target.dataset.type;
+
+            if (type) {
+                const sortedResults = sortProducts(products, type);
+                renderProducts(sortedResults);
+            }
+        }
+    </script>
 </body>
 
 </html>
