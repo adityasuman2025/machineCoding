@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Listing</title>
+
+    <link href="styles.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div id="content">
+        <input type="text" id="searchInput" />
+
+        <div id="sortBy">
+            <button data-type="name">Name</button>
+            <button data-type="eta">ETA</button>
+            <button data-type="rating">Rating</button>
+        </div>
+
+        <select id="filter">
+            <option></option>
+        </select>
+    </div>
+
+    <div id="products"></div>
+
+    <script type="module" src="script.js"> </script>
+</body>
+
+</html>

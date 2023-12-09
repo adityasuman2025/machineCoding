@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative Creation</title>
+
+    <link href="styles.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="circle-container"></div>
+    <div id="content">
+        <div id="page">
+            <div id="pageContent">
+                <h2>Filter By</h2>
+
+                <div id="filters">
+                    <div class="filterOptions">
+                        <h4>color:</h4>
+                        <div id="filterColors"></div>
+                    </div>
+
+                    <div class="filterOptions">
+                        <h4>title / subtitle:</h4>
+                        <input class="input" type="text" />
+                    </div>
+                </div>
+
+                <div id="progressbarContainer"></div>
+                <div role="button" class="button" id="addCreativeBtn" data-type="addCreativeBtn">+ Add Creative</div>
+
+                <div id="creatives"></div>
+            </div>
+        </div>
+
+
+        <div id="modal">
+            <div id="modalContent">
+                <div id="modalHeader">
+                    <h2>Creative Creation</h2>
+                    <h2 role="button" id="modalCloseBtn" data-type="modalCloseBtn">X</h2>
+                </div>
+
+                <label>
+                    <h4>title</h4>
+                    <input class="input" type="text" name="title" />
+                </label>
+                <br /><br />
+
+                <label>
+                    <h4>subtitle</h4>
+                    <input class="input" type="text" name="subtitle" />
+                </label>
+                <br /><br />
+
+                <label>
+                    <h4>background color</h4>
+                    <div id="backgrndColors"></div>
+                </label>
+                <br /><br />
+
+                <div role="button" class="button disabledBtn" id="createCreativeBtn" data-type="createCreativeBtn">
+                    Done
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="script.js"> </script>
+</body>
+
+</html>

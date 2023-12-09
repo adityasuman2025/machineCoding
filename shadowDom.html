@@ -1,0 +1,44 @@
+<template id="my-component-template">
+    <style>
+        .component-content {
+            background-color: red;
+        }
+    </style>
+    <div class="component-content">
+        shadowDom hai
+    </div>
+</template>
+
+<script>
+    class MyComponent extends HTMLElement {
+        constructor() {
+            super();
+
+            // Create a Shadow DOM for the custom element
+            const shadowRoot = this.attachShadow({ mode: 'open' });
+
+            // Clone the content of the template into the Shadow DOM
+            const template = document.getElementById('my-component-template');
+            shadowRoot.appendChild(template.content.cloneNode(true));
+        }
+    }
+
+    // Define the custom element
+    customElements.define('my-component', MyComponent);
+</script>
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shadow DOM</title>
+</head>
+
+<body>
+    <my-component></my-component>
+</body>
+
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comment</title>
+
+    <style>
+        .commentBox {
+            border: 1px solid grey;
+            padding: 5px;
+        }
+
+        .commentBox textarea {
+            margin-left: 10px;
+        }
+
+        .replies {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="commentsContainer"></div>
+    <textarea id="comment"></textarea>
+    <button onclick="handleCommentClick(event)">comment</button>
+
+    <script type="text/javascript" src="script.js"></script>
+</body>
+
+</html>

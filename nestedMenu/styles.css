@@ -1,0 +1,37 @@
+body {
+    background-color: grey;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.menu {
+    background-color: white;
+    /* padding: 5px; */
+    border: 1px solid grey;
+    width: fit-content;
+    border-radius: 5px;
+}
+
+.menuItem {
+    position: relative;
+    border-bottom: 1px solid grey;
+    padding: 5px;
+    min-width: 150px;
+    width: fit-content;
+    cursor: pointer;
+}
+
+.menuTitle {}
+
+.menuWrapper {
+    position: absolute;
+    left: 100%;
+    top: 0px;
+}
+
+.hidden {
+    display: none;
+}
+
+.visible {
+    display: block;
+}

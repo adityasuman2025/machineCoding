@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telephone Formatter</title>
+    <style>
+        #content {
+            text-align: center;
+        }
+
+        #input {
+            width: 400px;
+            height: 35px;
+            border: 1px solid grey;
+            border-radius: 5px;
+            margin: 5px;
+            padding: 5px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="content">
+        <input type="text" id="input" placeholder="mobile number" autofocus maxlength="16" autocomplete="off" />
+        <div>+(123) - 4567890</div>
+    </div>
+
+
+    <script type="text/javascript">
+        const inputEle = document.getElementById("input");
+        inputEle.addEventListener("keyup", handleInputChange);
+
+        function handleInputChange(e) {
+            const inputValue = e.target.value;
+
+            // Remove any non-numeric characters  // filtering out any character other than number
+            const numberOnlyStr = [...inputValue].filter(i => !isNaN(Number(i)) && i !== ' ').join(""); // Number(" ") gives 0, thats why && i !== ' '
+
+            e.target.value = numberOnlyStr.length > 3 ? '+(' + numberOnlyStr.substring(0, 3) + ') - ' + numberOnlyStr.substring(3) : numberOnlyStr;
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,22 @@
+{
+    "name": "smallwebapps",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start": "serve ."
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/adityasuman2025/coreJs.git"
+    },
+    "author": "Aditya Suman",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/adityasuman2025/coreJs/issues"
+    },
+    "homepage": "https://github.com/adityasuman2025/coreJs#readme",
+    "dependencies": {
+        "serve": "14.2.1"
+    }
+}

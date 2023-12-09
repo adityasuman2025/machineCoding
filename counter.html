@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Counter</title>
+    <style>
+        #content {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="content">
+        <div id="counter"></div>
+
+        <button data-type="minus">-</button>
+        <button data-type="plus">+</button>
+        <br /><br />
+
+        <label>
+            Change By
+            <input type="number" id="changeBy" data-type="changeBy" value="1" />
+        </label>
+        <br /><br />
+
+        <button data-type="reset">Reset</button>
+    </div>
+
+
+    <script type="text/javascript">
+        const counterEle = document.getElementById("counter");
+        const changeByEle = document.getElementById("changeBy");
+
+        const contentEle = document.getElementById("content");
+        contentEle.addEventListener("click", handleContentClick);
+        contentEle.addEventListener("keyup", handleContentChange);
+        contentEle.addEventListener("change", handleContentChange);
+
+        let counter = 0;
+        let changeBy = 1;
+
+        renderCounter();
+        function renderCounter() {
+            counterEle.innerText = counter;
+        }
+
+        function handleContentChange(e) {
+            const type = e?.target?.dataset?.type;
+            const val = e?.target?.value
+
+            if (type === "changeBy" && val) {
+                changeBy = Number(val);
+            }
+        }
+
+        function handleContentClick(e) {
+            const type = e?.target?.dataset?.type;
+
+            if (type === "plus") {
+                counter += changeBy;
+            } else if (type === "minus") {
+                counter -= changeBy;
+            } else if (type === "reset") {
+                counter = 0;
+                changeBy = 1;
+
+                changeByEle.value = 1;
+            }
+
+            renderCounter();
+        }
+    </script>
+</body>
+
+</html>

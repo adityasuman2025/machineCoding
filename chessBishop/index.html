@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Bishop Movement</title>
+
+    <style>
+        body {
+            background-color: slategray;
+        }
+
+        #content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        #chess {
+            display: grid;
+            grid-template-columns: repeat(8, auto);
+        }
+
+        .cell {
+            width: 80px;
+            height: 80px;
+            background-color: black;
+        }
+
+        .whiteCell {
+            background-color: white;
+        }
+
+        .activeCell {
+            background-color: lightskyblue !important
+        }
+    </style>
+</head>
+
+<body>
+    <div id="content">
+        <div id="chess">
+
+        </div>
+    </div>
+
+    <script type="text/javascript" src="./script.js"> </script>
+</body>
+
+</html>

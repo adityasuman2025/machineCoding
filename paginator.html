@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paginator</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f1f1f1;
+        }
+
+        #content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0px;
+        }
+
+        #paginator {
+            display: flex;
+            align-content: center;
+            justify-content: center;
+        }
+
+        button {
+            margin: 3px;
+            padding: 5px 10px;
+            border: 1px solid lightgray;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        .active {
+            background-color: cadetblue;
+        }
+
+        .disabled {
+            pointer-events: none;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="content">
+        <h2>Paginator</h2>
+        <div id="paginator"></div>
+    </div>
+
+    <script type="text/javascript">
+        const TOTAL_ITEMS = 100;
+        const ITEMS_PER_PAGE = 10;
+        const TOTAL_NO_OF_BUTTONS = TOTAL_ITEMS / ITEMS_PER_PAGE; // no of pages
+        const VISIBLE_NO_OF_BUTTONS = 5;
+
+        let activeBtnNo = 1;
+
+        const paginatorEle = document.getElementById("paginator");
+        paginatorEle.addEventListener("click", handlePaginationClick);
+
+        function handlePaginationClick(e) {
+            const { type, pageNo } = e?.target?.dataset || {};
+
+            if (type === "number" && pageNo) activeBtnNo = Number(pageNo);
+            else if (type === "prev") {
+                if (activeBtnNo - 1 >= 1) activeBtnNo--;
+            } else if (type === "next") {
+                if (activeBtnNo + 1 <= TOTAL_NO_OF_BUTTONS) activeBtnNo++;
+            }
+
+            renderPaginationButtons();
+        }
+
+        renderPaginationButtons();
+        function renderPaginationButtons() {
+            const tempEle = document.createElement("div");
+
+            // prev btn
+            const prevBtnEle = getBtnHtml("<", true, "prev");
+            if (activeBtnNo === 1) prevBtnEle.classList.add("disabled");
+            tempEle.append(prevBtnEle);
+            // prev btn
+
+            // for showing the neighbours btns
+            let start = activeBtnNo - parseInt(VISIBLE_NO_OF_BUTTONS / 2);
+            let end = activeBtnNo + parseInt(VISIBLE_NO_OF_BUTTONS / 2)
+            if (start < 1) {
+                start = 1
+                end = VISIBLE_NO_OF_BUTTONS;
+            } else if (end > TOTAL_NO_OF_BUTTONS) {
+                let newStart = TOTAL_NO_OF_BUTTONS - VISIBLE_NO_OF_BUTTONS;
+                start = newStart < 1 ? 1 : newStart + 1;
+                end = TOTAL_NO_OF_BUTTONS;
+            }
+            // for showing the neighbours btns
+
+            // if neighbours are far from 1st btn then showing first btn
+            if (start !== 1) {
+                start++;  // if neighbours are far from 1st btn then increasing start limit beacause we can outmost VISIBLE_NO_OF_BUTTONS
+                const firstBtnEle = getBtnHtml(1);
+                tempEle.append(firstBtnEle);
+
+                const threeDotsEle = getBtnHtml("...", true, "threeDots");
+                tempEle.append(threeDotsEle);
+            }
+            // if neighbours are far from 1st btn then showing first btn
+
+            if (end !== TOTAL_NO_OF_BUTTONS) end--; // if neighbours are far from last btn then decreaing end limit beacause we can outmost VISIBLE_NO_OF_BUTTONS
+
+            for (let i = start; i <= end && i <= TOTAL_NO_OF_BUTTONS; i++) {
+                const btnEle = getBtnHtml(i);
+                if (i === activeBtnNo) btnEle.classList.add("active");
+                tempEle.append(btnEle);
+            }
+
+            // if neighbours are far from last btn then showing last btn
+            if (end !== TOTAL_NO_OF_BUTTONS) {
+                const threeDotsEle = getBtnHtml("...", true, "threeDots");
+                tempEle.append(threeDotsEle);
+
+                const lastBtnEle = getBtnHtml(TOTAL_NO_OF_BUTTONS);
+                tempEle.append(lastBtnEle);
+            }
+            // if neighbours are far from last btn then showing last btn
+
+            // next btn
+            const nextBtnEle = getBtnHtml(">", true, "next");
+            if (activeBtnNo === TOTAL_NO_OF_BUTTONS) nextBtnEle.classList.add("disabled");
+            tempEle.append(nextBtnEle);
+            // next btn
+
+            paginatorEle.innerHTML = tempEle.innerHTML;
+        }
+
+        function getBtnHtml(text, isNotNumber = false, type) {
+            const btnEle = document.createElement("button");
+            btnEle.innerText = text;
+
+            if (isNotNumber) {
+                btnEle.dataset.type = type;
+            } else {
+                btnEle.dataset.type = "number";
+                btnEle.dataset.pageNo = text;
+            }
+
+            return btnEle;
+        }
+    </script>
+</body>
+
+</html>

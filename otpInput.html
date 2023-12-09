@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Input</title>
+
+    <style>
+        #content {
+            font-family: Arial, Helvetica, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #otp {
+            display: flex;
+            align-items: center;
+            font-size: 25px;
+        }
+
+        .input {
+            width: 60px;
+            height: 60px;
+            font-size: 50px;
+            margin: 0 5px;
+            text-align: center;
+
+            border: none;
+            border-bottom: 1px solid grey;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="content">
+        <div>OTP field allowing only digits. It supports backspace, delete, tab, shift + tab, left and right arrows
+            along with paste functionality.</div>
+        <br /><br />
+
+        <div id="otp">
+            <input type="text" maxlength="1" class="input" data-otp-item="1" />
+            <input type="text" maxlength="1" class="input" data-otp-item="2" />
+            <input type="text" maxlength="1" class="input" data-otp-item="3" />
+            <input type="text" maxlength="1" class="input" data-otp-item="4" />
+            <input type="text" maxlength="1" class="input" data-otp-item="5" />
+            <input type="text" maxlength="1" class="input" data-otp-item="6" />
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+        const INVALID_KEYS = ["Shift", "Meta", "Control", "Enter", "Alt", "ArrowUp", "ArrowDown", "Tab", "v"]; // "v" because it can come from ctrl + v (paste shortcut)
+        const ARROW_KEYS = ["ArrowRight", "ArrowLeft"];
+        const OTP_ITEM_COUNT = 6;
+
+        const otpEle = document.getElementById("otp");
+        otpEle.addEventListener("keyup", handleOtpChange);
+        otpEle.addEventListener("paste", handlePaste);
+
+        function handlePaste(e) {
+            // Stop data actually being pasted into div
+            e.stopPropagation();
+            e.preventDefault();
+
+            // Get pasted data via clipboard API
+            const pastedData = e?.clipboardData?.getData('Text');
+            if (pastedData && Number(pastedData)) renderOtpInputField(pastedData);
+        }
+
+        function renderOtpInputField(text) {
+            const otpInputEles = otpEle.getElementsByClassName("input");
+            for (let i = 0; i < otpInputEles.length; i++) {
+                otpInputEles[i].value = Number(text[i]) || ""
+            }
+        }
+
+        function handleOtpChange(e) {
+            const otpItem = Number(e?.target?.dataset?.["otp-item"]);
+            const key = e?.key.trim();
+
+            if (!otpItem) return;
+
+            if (key && !isNaN(Number(key))) { // Number("") gives 0
+                e.target.value = key; // replace already present value with the new input key
+
+                if (otpItem + 1 <= OTP_ITEM_COUNT) moveToPos(otpItem + 1); // focusing on next otp input element
+            } else if (key === "Backspace") {
+                e.target.value = "";
+
+                if (otpItem - 1 >= 1) moveToPos(otpItem - 1); // focusing on prev otp input element
+            } else if (key === "ArrowRight") {
+                if (otpItem + 1 <= OTP_ITEM_COUNT) moveToPos(otpItem + 1); // focusing on next otp input element
+            } else if (key === "ArrowLeft") {
+                if (otpItem - 1 >= 1) moveToPos(otpItem - 1); // focusing on prev otp input element
+            } else if (INVALID_KEYS.includes(key)) { } // do nothing // ignoring these keys
+            else e.target.value = "";
+        }
+
+        function moveToPos(pos) {
+            const prevOtpItemEle = otpEle.querySelector(`[data-otp-item='${pos}']`);
+            prevOtpItemEle.focus();
+        }
+    </script>
+</body>
+
+</html>

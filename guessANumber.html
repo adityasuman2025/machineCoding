@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess A Number</title>
+    <style>
+        #content {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="content">
+        <div>Enter a guess between 0 to 100</div>
+        <br />
+
+        <input type="number" data-type="guess" id="guessInput" />
+        <br /><br />
+
+        <button data-type="submit" id="submit">Submit</button>
+        <button data-type="reset" id="reset">Reset</button>
+        <br /><br />
+
+        <div id="result"></div>
+        <div id="guesses"></div>
+    </div>
+
+
+    <script>
+        let guess = Math.floor(Math.random() * 100) + 1;
+        let guesses = [];
+        let thisGuess;
+
+        const contentEle = document.getElementById("content");
+        contentEle.addEventListener("click", handleContentClick);
+        contentEle.addEventListener("change", handleContentChange);
+        contentEle.addEventListener("keyup", handleContentChange);
+
+        const guessInputEle = document.getElementById("guessInput");
+        const submitBtnEle = document.getElementById("submit");
+        const resetBtnEle = document.getElementById("reset");
+        resetBtnEle.setAttribute("disabled", true); // by default reset btn will be disabled
+
+        const resultEle = document.getElementById("result");
+        const guessesEle = document.getElementById("guesses");
+
+        function handleContentChange(e) {
+            const type = e?.target?.dataset?.type;
+            const val = e?.target?.value;
+
+            if (type === "guess" && val) thisGuess = Number(val);
+        }
+
+        function handleContentClick(e) {
+            const type = e?.target?.dataset?.type;
+
+            if (type === "submit") handleSubmitBtnClick()
+            else if (type === "reset") handleResetBtnClick();
+        }
+
+        function handleSubmitBtnClick() {
+            guessInputEle.value = ""; // clearing this input value
+            guessInputEle.focus(); // focusing the input field
+
+            if (thisGuess === undefined) {
+                renderResult("Enter a guess");
+                return;
+            }
+
+            guesses.push(thisGuess);
+            if (guess === thisGuess) {
+                renderResult("Congrats!! You found the guess");
+
+                resetBtnEle.removeAttribute("disabled"); // enabling the reset btn
+                submitBtnEle.setAttribute("disabled", true); // disabling the submit btn
+            } else if (thisGuess > guess) {
+                renderResult("Too high!");
+            } else {
+                renderResult("Too low!");
+            }
+        }
+
+        function handleResetBtnClick() {
+            guess = Math.floor(Math.random() * 100) + 1;
+            guesses = [];
+            thisGuess = undefined;
+
+            submitBtnEle.removeAttribute("disabled"); // enabling the submit btn
+            resetBtnEle.setAttribute("disabled", true); // disabling the reset btn
+
+            renderResult(""); // clearing the result section
+        }
+
+        function renderResult(text) {
+            resultEle.innerText = text;
+
+            guessesEle.innerText = text ? "Your Guesses: " + guesses.join(", ") : "";
+        }
+    </script>
+</body>
+
+</html>

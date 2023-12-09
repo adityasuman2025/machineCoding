@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toast</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #content {
+            text-align: center;
+        }
+
+        #toasts {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+        }
+
+        .toast {
+            padding: 10px;
+            width: 250px;
+            background-color: antiquewhite;
+            margin: 5px 0px;
+            border-radius: 4px;
+            border: 1px solid #f1f1f1;
+            position: relative;
+        }
+
+        .toastCloseBtn {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 100%;
+            background-color: coral;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="content">
+        <br />
+        <button id="createToastBtn" data-type="createToastBtn">create toast</button>
+
+        <div id="toasts"></div>
+    </div>
+
+
+    <script>
+        const DURATION = 10000 // in ms
+        const toastsEle = document.getElementById("toasts");
+
+        const contentEle = document.getElementById("content");
+        contentEle.addEventListener("click", handleContentClick);
+
+        function handleContentClick(e) {
+            const type = e?.target?.dataset?.type;
+
+            if (type === "createToastBtn") {
+                handleCreateToastBtnClick();
+            } else if (type === "toastCloseBtn") {
+                handleToastCloseBtnClick(e)
+            }
+
+        }
+
+        function handleCreateToastBtnClick() {
+            const toastEle = document.createElement("div");
+            toastEle.classList.add("toast");
+            toastEle.innerText = "this is a toast " + new Date().getTime();
+
+            const toastCloseBtnEle = document.createElement("div");
+            toastCloseBtnEle.classList.add("toastCloseBtn");
+            toastCloseBtnEle.dataset.type = "toastCloseBtn";
+            toastEle.append(toastCloseBtnEle)
+
+            setTimeout(() => { toastEle.remove() }, DURATION); // removing that toast after DURATION duration
+
+            toastsEle.append(toastEle);
+        }
+
+        function handleToastCloseBtnClick(e) {
+            e?.target?.parentElement.remove(); // removing parent of toast close btn i.e. toast element
+        }
+    </script>
+</body>
+
+</html>

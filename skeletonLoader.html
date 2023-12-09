@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skeleton Loader</title>
+    <style>
+        .content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card {
+            width: 800px;
+        }
+
+        .skeleton-loader {
+            width: 100%;
+            background: #ddd;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .skeleton-loader::before {
+            content: '';
+            position: absolute;
+            display: block;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, #fff, transparent);
+            transform: translateX(-100%);
+            animation: shimmerAnimation 1s infinite;
+        }
+
+        @keyframes shimmerAnimation {
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .img {
+            height: 220px;
+        }
+
+        .heading {
+            height: 60px;
+        }
+
+        .content1,
+        .content2 {
+            height: 40px;
+        }
+
+        .content2 {
+            width: 70%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="content">
+        <div class="card">
+            <div class="img skeleton-loader"></div>
+            <h3 class="heading skeleton-loader"></h3>
+            <p class="content1 skeleton-loader"></p>
+            <p class="content2 skeleton-loader"></p>
+        </div>
+    </div>
+</body>
+
+</html>

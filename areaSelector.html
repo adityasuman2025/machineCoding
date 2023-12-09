@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Area Selector</title>
+    <style>
+        body {
+            background-color: #f1f1f1;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        #content {
+            text-align: center;
+        }
+
+        #board {
+            width: fit-content;
+            border: 0.5px solid black;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+        }
+
+        .cell {
+            width: 40px;
+            height: 40px;
+            border: 0.5px solid black;
+        }
+
+        .filled {
+            background-color: aquamarine;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="content">
+        <h3>Click & hold on a box and drag to select multiple boxes</h3>
+        <div id="board"></div>
+    </div>
+
+    <script>
+        const boardEle = document.getElementById("board");
+
+        const WINDOW_WIDTH = window.innerWidth - 100, WINDOW_HEIGHT = window.innerHeight - 150;
+        const CELL_DIMN = 40, CELL_BORDER_WIDTH = 0.5;
+        const VERTICAL_CELL_COUNT = Math.floor(WINDOW_HEIGHT / CELL_DIMN);
+        const HORIZONTAL_CELL_COUNT = Math.floor(WINDOW_WIDTH / CELL_DIMN);
+        const BOARD_OFFSET_LEFT = boardEle.offsetLeft, BOARD_OFFSET_TOP = boardEle.offsetTop;
+
+        let isHolding = false;
+        let timer;
+
+        let startCursorPosInBoardX, startCursorPosInBoardY;
+        let currCursorPosInBoardX, currCursorPosInBoardY;
+
+        boardEle.addEventListener('mousedown', handleMouseDown);
+        boardEle.addEventListener('mouseup', handleBoardMouseUp);
+        boardEle.addEventListener("mousemove", handleBoardMouseMove);
+
+        function handleMouseDown(e) {
+            startCursorPosInBoardX = e.clientX - BOARD_OFFSET_LEFT;
+            startCursorPosInBoardY = e.clientY - BOARD_OFFSET_TOP;
+
+            timer = setTimeout(function() { isHolding = true; }, 200); // simulating hold event
+        }
+
+        function handleBoardMouseUp() {
+            clearTimeout(timer);
+            isHolding = false;
+
+            startCursorPosInBoardX = undefined, startCursorPosInBoardY = undefined;
+            currCursorPosInBoardX = undefined, currCursorPosInBoardY = undefined;
+            renderBoard();
+        }
+
+        function handleBoardMouseMove(e) {
+            if (isHolding) { // if mouse is hold and moved
+                currCursorPosInBoardX = e.clientX - BOARD_OFFSET_LEFT;
+                currCursorPosInBoardY = e.clientY - BOARD_OFFSET_TOP;
+
+                renderBoard();
+            }
+        }
+
+        renderBoard();
+        function renderBoard() {
+            const startCellX = Math.ceil(startCursorPosInBoardX / (CELL_DIMN + 2 * CELL_BORDER_WIDTH)) - 1;
+            const startCellY = Math.ceil(startCursorPosInBoardY / (CELL_DIMN + 2 * CELL_BORDER_WIDTH)) - 1;
+
+            const endCellX = Math.ceil(currCursorPosInBoardX / (CELL_DIMN + 2 * CELL_BORDER_WIDTH)) - 1;
+            const endCellY = Math.ceil(currCursorPosInBoardY / (CELL_DIMN + 2 * CELL_BORDER_WIDTH)) - 1;
+
+            const tempEle = document.createElement("div");
+            for (let i = 0; i < VERTICAL_CELL_COUNT; i++) {
+                const rowEle = document.createElement("div");
+                rowEle.classList.add("row");
+
+                for (let j = 0; j < HORIZONTAL_CELL_COUNT; j++) {
+                    const cellEle = document.createElement("div");
+                    cellEle.classList.add("cell");
+
+                    if ((j >= startCellX && j <= endCellX) && (i >= startCellY && i <= endCellY)) cellEle.classList.add("filled"); // if mouse moved down-right (clockwise)
+                    if ((j >= endCellX && j <= startCellX) && (i >= endCellY && i <= startCellY)) cellEle.classList.add("filled"); // if mouse moved top-left (anti-clockwise)
+
+                    rowEle.append(cellEle);
+                }
+
+                tempEle.append(rowEle);
+            }
+
+            boardEle.innerHTML = tempEle.innerHTML;
+        }
+    </script>
+</body>
+
+</html>

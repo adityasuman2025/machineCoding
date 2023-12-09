@@ -1,0 +1,84 @@
+body {
+    background-color: #f1f1f1;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#content {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#calendar {
+    border: 1px solid grey;
+    padding: 10px;
+}
+
+#monthChanger {
+    margin: 5px 0px 15px 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#monthChanger select {
+    width: 90px;
+    height: 40px;
+}
+
+#weekDays {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    color: gray;
+}
+
+.dummyCell {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1px;
+
+    pointer-events: none;
+}
+
+.sunday {
+    color: orangered;
+}
+
+#monthDates {
+    display: grid;
+    grid-template-columns: repeat(7, auto);
+}
+
+.cell {
+    border-radius: 100%;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.currentDate {
+    border: 1px solid grey;
+}
+
+.todayDate {
+    background-color: aquamarine;
+}
+
+#selectedDate {
+    margin: 15px 0px 5px 0px;
+    font-size: 16px;
+    text-align: center;
+}
