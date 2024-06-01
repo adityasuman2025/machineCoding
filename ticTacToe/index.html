@@ -14,11 +14,15 @@
             justify-content: center;
         }
 
-        #boxes {
-            margin: 10px 0;
-            display: grid;
-            grid-template-columns: repeat(3, auto);
+        #pattern {
+            margin-top: 50px;
+            margin-bottom: 10px;
             border: 1px solid black;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
         }
 
         .box {
@@ -42,103 +46,112 @@
     <div class="content">
         <div id="turn"></div>
 
-        <div id="boxes">
-            <div class="box" id="box_0" data-id="0"></div>
-            <div class="box" id="box_1" data-id="1"></div>
-            <div class="box" id="box_2" data-id="2"></div>
-            <div class="box" id="box_3" data-id="3"></div>
-            <div class="box" id="box_4" data-id="4"></div>
-            <div class="box" id="box_5" data-id="5"></div>
-            <div class="box" id="box_6" data-id="6"></div>
-            <div class="box" id="box_7" data-id="7"></div>
-            <div class="box" id="box_8" data-id="8"></div>
-        </div>
+        <div id="pattern"></div>
 
         <div id="winText"></div>
-
-        <button id="resetBtn">reset</button>
+        <button id="resetBtn" disabled="true">reset</button>
     </div>
 
     <script type="text/javascript">
-        const winningPatterns = [
-            [0, 1, 2],
-            [3, 4, 5],
-            [6, 7, 8],
-            [0, 3, 6],
-            [1, 4, 7],
-            [2, 5, 8],
-            [0, 4, 8],
-            [2, 4, 6],
-        ];
+        const SIZE = 5;
 
-        const turnEle = document.getElementById("turn");
+        const patternData = Array(SIZE).fill(null).map(() => Array(SIZE).fill(null));
+        let turn = "x"; // or "o"
+        let winner = null;
+
         const winTextEle = document.getElementById("winText");
         const resetBtnEle = document.getElementById("resetBtn");
-        const boxesEle = document.getElementById("boxes");
-        boxesEle.addEventListener("click", handleBoxesClick);
         resetBtnEle.addEventListener("click", handleResetClick);
+        const patternEle = document.getElementById("pattern");
+        patternEle.addEventListener("click", handlePatternClick);
 
-        let turn = "x", game = ["", "", "", "", "", "", "", ""];
+        renderPattern();
+        function renderPattern() {
+            patternEle.innerHTML = "";
 
-        function handleBoxesClick({ target } = {}) {
-            const { id } = target.dataset || {};
+            for (let i = 0; i < SIZE; i++) {
+                const row = document.createElement("div");
+                row.classList.add("row");
 
-            if (id) {
-                if (!game[id]) {
-                    game[id] = turn;
-                    renderBox();
+                for (let j = 0; j < SIZE; j++) {
+                    const box = document.createElement("div");
+                    box.classList.add("box");
+                    box.dataset.rowIdx = i;
+                    box.dataset.colIdx = j;
+                    box.innerText = patternData[i][j] || "";
+                    row.appendChild(box);
+                }
 
-                    const winner = checkWinner();
+                patternEle.appendChild(row);
+            }
+        }
+
+        function renderWinner() {
+            winTextEle.innerText = `${winner} wins`;
+            resetBtnEle.removeAttribute("disabled");
+        }
+
+        function handleResetClick() {
+            turn = "x"; //reset turn
+            winner = null; //reset winner
+            for (let i = 0; i < SIZE; i++) {
+                for (let j = 0; j < SIZE; j++) {
+                    patternData[i][j] = null;
+                }
+            }
+
+            renderPattern();
+            winTextEle.innerText = ``; //reset winner
+            resetBtnEle.setAttribute("disabled", true);
+        }
+
+        function handlePatternClick({ target } = {}) {
+            if (winner) return;
+            const { rowIdx, colIdx } = target?.dataset || {};
+
+            if (rowIdx !== undefined && colIdx !== undefined) {
+                if (!patternData[rowIdx][colIdx]) {
+                    patternData[rowIdx][colIdx] = turn;
+                    renderPattern();
+
+                    winner = checkWinner();
                     if (winner) {
-                        handleWinner(winner, winner === "draw");
+                        renderWinner();
                         return;
                     }
 
-                    turn = turn === "x" ? "o" : "x";
-                    renderTurn();
+                    changeTurn();
                 }
             }
         }
 
         function checkWinner() {
-            for (let i = 0; i < winningPatterns.length; i++) {
-                const [x, y, z] = winningPatterns[i];
-                if (game[x] && (game[x] === game[y]) && (game[y] === game[z])) return game[x];
+            for (let i = 0; i < SIZE; i++) {
+                // checking row
+                if (patternData[i].every(val => val && val === patternData[i][0])) return patternData[i][0];
+
+                // checking column
+                if (patternData.every((row, rowIdx) => {
+                    const val = row[i]; // ith column of each row
+                    return val && val === patternData[0][i];
+                })) return patternData[0][i];
+
+                // checking diagonal
+                if (patternData.every((row, rowIdx) => {
+                    const val = row[rowIdx]; // rowIdx th column of each row
+                    return val && val === patternData[0][0];
+                })) return patternData[0][0];
+
+                // checking anti-diagonal
+                if (patternData.every((row, rowIdx) => {
+                    const val = row[SIZE - 1 - rowIdx]; // SIZE - 1 - rowIdx th column of each row
+                    return val && val === patternData[0][SIZE - 1];
+                })) return patternData[0][SIZE - 1];
             }
-
-            if (!game.includes("")) return "draw";
-
-            return false;
         }
 
-        function handleWinner(winner, isDraw) {
-            if (isDraw) winTextEle.innerText = `its a draw`;
-            else winTextEle.innerText = `${winner} wins`;
-            boxesEle.removeEventListener("click", handleBoxesClick);
-        }
-
-        function renderBox() {
-            let boxEle;
-            for (let i = 0; i < 9; i++) {
-                boxEle = document.getElementById("box_" + i);
-                boxEle.innerHTML = game[i] || ""
-            }
-        }
-
-        function renderTurn() {
-            turnEle.innerText = `${turn} turn`;
-        }
-        renderTurn();
-
-        function handleResetClick() {
-            turn = "x"; //reset turn
-            for (let i = 0; i < game.length; i++) game[i] = ""; //reset game data
-            winTextEle.innerText = ``; //reset winner
-
-            renderBox();
-            renderTurn();
-
-            boxesEle.addEventListener("click", handleBoxesClick);
+        function changeTurn() {
+            turn = turn === "x" ? "o" : "x";
         }
     </script>
 </body>
