@@ -11,12 +11,10 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
         }
 
         #pattern {
-            margin-top: 50px;
-            margin-bottom: 10px;
+            margin: 10px 0px;
             border: 1px solid black;
         }
 
@@ -35,20 +33,15 @@
             font-size: 30px;
             cursor: pointer;
         }
-
-        #winText {
-            font-size: 30px;
-        }
     </style>
 </head>
 
 <body>
     <div class="content">
-        <div id="turn"></div>
-
+        <h3 id="turn"></h3>
         <div id="pattern"></div>
 
-        <div id="winText"></div>
+        <h1 id="winText"></h1>
         <button id="resetBtn" disabled="true">reset</button>
     </div>
 
@@ -59,6 +52,8 @@
         let turn = "x"; // or "o"
         let winner = null;
 
+        const turnEle = document.getElementById("turn");
+        turnEle.innerText = `${turn}'s turn`;
         const winTextEle = document.getElementById("winText");
         const resetBtnEle = document.getElementById("resetBtn");
         resetBtnEle.addEventListener("click", handleResetClick);
@@ -135,23 +130,24 @@
                     const val = row[i]; // ith column of each row
                     return val && val === patternData[0][i];
                 })) return patternData[0][i];
-
-                // checking diagonal
-                if (patternData.every((row, rowIdx) => {
-                    const val = row[rowIdx]; // rowIdx th column of each row
-                    return val && val === patternData[0][0];
-                })) return patternData[0][0];
-
-                // checking anti-diagonal
-                if (patternData.every((row, rowIdx) => {
-                    const val = row[SIZE - 1 - rowIdx]; // SIZE - 1 - rowIdx th column of each row
-                    return val && val === patternData[0][SIZE - 1];
-                })) return patternData[0][SIZE - 1];
             }
+
+            // checking diagonal
+            if (patternData.every((row, rowIdx) => {
+                const val = row[rowIdx]; // rowIdx th column of each row
+                return val && val === patternData[0][0];
+            })) return patternData[0][0];
+
+            // checking anti-diagonal
+            if (patternData.every((row, rowIdx) => {
+                const val = row[SIZE - 1 - rowIdx]; // SIZE - 1 - rowIdx th column of each row
+                return val && val === patternData[0][SIZE - 1];
+            })) return patternData[0][SIZE - 1];
         }
 
         function changeTurn() {
             turn = turn === "x" ? "o" : "x";
+            turnEle.innerText = `${turn}'s turn`;
         }
     </script>
 </body>
