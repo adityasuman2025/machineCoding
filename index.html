@@ -25,20 +25,116 @@
             background-color: #1f1f1f;
             font-family: Arial, Helvetica, sans-serif;
             color: #f1f1f1;
+            margin: 0;
+            padding: 24px;
         }
 
         a,
         a:visited {
             color: white;
+            text-decoration: none;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        header h1 {
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: #b0b0b0;
+            margin-top: 0;
+        }
+
+        .projects {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 14px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .project {
+            display: block;
+            padding: 16px 18px;
+            background-color: #2a2a2a;
+            border: 1px solid #3a3a3a;
+            border-radius: 8px;
+            transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+        }
+
+        .project:hover {
+            background-color: #333333;
+            border-color: #5a5a5a;
+            transform: translateY(-2px);
+        }
+
+        .project .index {
+            color: #888;
+            font-size: 12px;
+            margin-right: 6px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #b0b0b0;
+            font-size: 14px;
         }
     </style>
 </head>
 
 <body>
-    <center>
-        <h1>Frontend Web Maching Coding Round Question</h1>
-        <p>explore more at <a href="https://quiz.mngo.in" target="_blank">MNgo Quiz</a></p>
-    </center>
+    <header>
+        <h1>Frontend Web Machine Coding Round Questions</h1>
+        <p>A collection of practice projects by <a href="https://adityas.site" target="_blank">Aditya Suman</a></p>
+    </header>
+
+    <main class="projects">
+        <a class="project" href="/areaSelector/"><span class="index">01</span>Area Selector</a>
+        <a class="project" href="/autoComplete/"><span class="index">02</span>Auto Complete</a>
+        <a class="project" href="/basicCalculator/"><span class="index">03</span>Basic Calculator</a>
+        <a class="project" href="/calendar/"><span class="index">04</span>Calendar</a>
+        <a class="project" href="/canvas/"><span class="index">05</span>Canvas</a>
+        <a class="project" href="/carousel/"><span class="index">06</span>Carousel</a>
+        <a class="project" href="/chessBishop/"><span class="index">07</span>Chess Bishop</a>
+        <a class="project" href="/comments/"><span class="index">08</span>Comments</a>
+        <a class="project" href="/countdownTimer/"><span class="index">09</span>Countdown Timer</a>
+        <a class="project" href="/counter/"><span class="index">10</span>Counter</a>
+        <a class="project" href="/creativeCreation/"><span class="index">11</span>Creative Creation</a>
+        <a class="project" href="/gridPattern/"><span class="index">12</span>Grid Pattern</a>
+        <a class="project" href="/guessANumber/"><span class="index">13</span>Guess A Number</a>
+        <a class="project" href="/infiniteScroll/"><span class="index">14</span>Infinite Scroll</a>
+        <a class="project" href="/mailClient/"><span class="index">15</span>Mail Client</a>
+        <a class="project" href="/nestedMenu/"><span class="index">16</span>Nested Menu</a>
+        <a class="project" href="/otpInput/"><span class="index">17</span>OTP Input</a>
+        <a class="project" href="/paginator/"><span class="index">18</span>Paginator</a>
+        <a class="project" href="/passwordGenerator/"><span class="index">19</span>Password Generator</a>
+        <a class="project" href="/passwordStrength/"><span class="index">20</span>Password Strength</a>
+        <a class="project" href="/productCompare/"><span class="index">21</span>Product Compare</a>
+        <a class="project" href="/productListing/"><span class="index">22</span>Product Listing</a>
+        <a class="project" href="/progressbar/"><span class="index">23</span>Progress Bar</a>
+        <a class="project" href="/ratings/"><span class="index">24</span>Ratings</a>
+        <a class="project" href="/shadowDom/"><span class="index">25</span>Shadow DOM</a>
+        <a class="project" href="/skeletonLoader/"><span class="index">26</span>Skeleton Loader</a>
+        <a class="project" href="/snakeGame/"><span class="index">27</span>Snake Game</a>
+        <a class="project" href="/tagging/"><span class="index">28</span>Tagging</a>
+        <a class="project" href="/tasks/"><span class="index">29</span>Tasks</a>
+        <a class="project" href="/telephoneFormatter/"><span class="index">30</span>Telephone Formatter</a>
+        <a class="project" href="/ticTacToe/"><span class="index">31</span>Tic Tac Toe</a>
+        <a class="project" href="/toast/"><span class="index">32</span>Toast</a>
+        <a class="project" href="/todos/"><span class="index">33</span>Todos</a>
+        <a class="project" href="/triangle/"><span class="index">34</span>Triangle</a>
+        <a class="project" href="/typingSpeedTest/"><span class="index">35</span>Typing Speed Test</a>
+        <a class="project" href="/virtualisation/"><span class="index">36</span>Virtualisation</a>
+    </main>
+
+    <footer>
+        explore more at <a href="https://quiz.adityas.site" target="_blank">Aditya Suman</a>
+    </footer>
 </body>
 
 </html>
