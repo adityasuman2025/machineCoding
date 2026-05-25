@@ -7,201 +7,128 @@
     <title>Basic Calculator</title>
     <style>
         body {
-            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 0;
         }
 
-        #content {
+        .content {
             display: flex;
-            align-content: center;
-            justify-content: center;
-        }
-
-        #calculator {
-            width: 200px;
-        }
-
-        #screen {
-            position: relative;
-            height: 50px;
-            margin: 5px;
-            border: 1px solid black;
-            display: flex;
-            align-content: center;
-            justify-content: center;
-        }
-
-        #display {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            flex-direction: column;
             width: 100%;
-            text-align: right;
-
-            font-size: 24px;
-            font-family: 'Courier New', Courier, monospace;
-        }
-
-        #keys {
-            display: flex;
-            flex-wrap: wrap;
+            height: 100vh;
             align-items: center;
             justify-content: center;
+            background-color: whitesmoke;
         }
 
-        .key {
-            height: 40px;
-            width: 40px;
-            background-color: antiquewhite;
-            margin: 5px;
+        .screen {
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: flex-end;
+            width: 200px;
+            height: 50px;
+            padding: 5px;
+            box-sizing: border-box;
+            border: 1px solid black;
+            margin-bottom: 5px;
+        }
+
+        .grid {
+            width: 200px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 5px;
+        }
+
+        .number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            box-sizing: border-box;
+            background-color: bisque;
             cursor: pointer;
         }
 
-        /*----- to show clicked animation color change when the key is clicked -----*/
-        .key:active,
-        .highlighted {
-            background-color: burlywood;
-        }
-
-        .cKey {
-            background-color: firebrick;
-            color: white;
-        }
-
-        .medium {
-            width: 90px;
-        }
-
-        .large {
-            width: 140px;
+        .operator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            box-sizing: border-box;
+            background-color: chocolate;
+            cursor: pointer;
         }
     </style>
 </head>
 
 <body>
-    <div id="content">
-        <div id="calculator">
-            <div id="screen">
-                <div id="display"></div>
-            </div>
+    <section class="content">
+        <div class="screen" id="screen"></div>
+        <div class="grid" id="grid">
+            <div class="number" data-id="1">1</div>
+            <div class="number" data-id="2">2</div>
+            <div class="number" data-id="3">3</div>
+            <div class="operator" data-id="C">C</div>
 
-            <div id="keys">
-                <div class="key" data-key="1">1</div>
-                <div class="key" data-key="2">2</div>
-                <div class="key" data-key="3">3</div>
-                <div class="key cKey" data-key="C">C</div>
+            <div class="number" data-id="4">4</div>
+            <div class="number" data-id="5">5</div>
+            <div class="number" data-id="6">6</div>
+            <div class="operator" data-id="+">+</div>
 
-                <div class="key" data-key="4">4</div>
-                <div class="key" data-key="5">5</div>
-                <div class="key" data-key="6">6</div>
-                <div class="key operator" data-key="+">+</div>
+            <div class="number" data-id="7">7</div>
+            <div class="number" data-id="8">8</div>
+            <div class="number" data-id="9">9</div>
+            <div class="operator" data-id="-">-</div>
 
-                <div class="key" data-key="7">7</div>
-                <div class="key" data-key="8">8</div>
-                <div class="key" data-key="9">9</div>
-                <div class="key operator" data-key="-">-</div>
-
-                <div class="key" data-key=".">.</div>
-                <div class="key medium" data-key="0">0</div>
-                <div class="key operator" data-key="x">x</div>
-
-                <div class="key large" data-key="=">=</div>
-                <div class="key operator" data-key="/">/</div>
-            </div>
+            <div class="number" data-id="=">=</div>
+            <div class="number" data-id="0">0</div>
+            <div class="number" data-id="x">x</div>
+            <div class="operator" data-id="/">/</div>
         </div>
-    </div>
+    </section>
 
     <script type="text/javascript">
-        const OPERATORS = ["+", "-", "/", "x"];
+        const OPERATORS = "+-x/C=";
 
-        const displayEle = document.getElementById("display");
-        const keysEle = document.getElementById("keys");
-        keysEle.addEventListener("click", handleKeyClick);
-        renderScreen(0);
+        const screenEle = document.getElementById("screen");
+        const gridEle = document.getElementById("grid");
+        gridEle.addEventListener("click", handleClick);
 
-        let prevVal, currVal = "", operator, isAnsCalculated = false;
-        function handleKeyClick(e) {
-            const key = e?.target?.dataset.key;
-            if (!key) return;
+        let res = "0", pendingOperator;
+        function handleClick(e) {
+            const thisEle = e.target;
+            const id = thisEle.dataset.id;
+            if (!id) return;
 
-            if (key === "C") {
-                prevVal = "";
-                currVal = "";
-                operator = "";
-                isAnsCalculated = false;
+            if (OPERATORS.includes(id)) {
+                if (id === "C") res = "0";
+                else if (id === "=") doCalculation();
+                else res = res + (OPERATORS.includes(res[res.length - 1]) ? "" : " " + id); // if last character already is a operator then -> do nothing
+            } else res = res === "0" ? id : res + (OPERATORS.includes(res[res.length - 1]) ? " " : "") + id;  // if last character is a operator -> only then add space
 
-                renderScreen(0);
-            } else if (OPERATORS.includes(key)) {
-                if (prevVal) {
-                    if (operator) currVal = doCalculation(operator, prevVal, currVal);
-                    else currVal = doCalculation(key, prevVal, currVal);
-
-                    prevVal = "";
-                    operator = key;
-                    renderScreen(currVal);
-
-                    isAnsCalculated = true;
-                } else {
-                    prevVal = currVal;
-                    currVal = "";
-                    operator = key;
-
-                    isAnsCalculated = false;
-                }
-            } else if (key === "=") {
-                if (prevVal && operator) {
-                    currVal = doCalculation(operator, prevVal, currVal);
-                    prevVal = "";
-                    operator = "";
-                    renderScreen(currVal);
-
-                    isAnsCalculated = true;
-                } else {
-                    prevVal = currVal;
-                    currVal = "";
-
-                    isAnsCalculated = false;
-                }
-            } else {
-                if (isAnsCalculated) {
-                    prevVal = currVal;
-                    currVal = key;
-                } else {
-                    currVal += key;
-                }
-
-                isAnsCalculated = false;
-                renderScreen(currVal);
-            }
-
-            highlightOperator(operator);
+            renderScreen();
         }
 
-        function doCalculation(action, first, second) {
-            if (!action) return second;
-
-            if (action === "+") return Number(first) + Number(second);
-            else if (action === "-") return Number(first) - Number(second);
-            else if (action === "x") return Number(first) * Number(second);
-            else if (action === "/") return Number(first) / Number(second);
+        function doCalculation() {
+            const [a, operator, b] = res.split(" ");
+            if (![a, b, operator].includes(undefined)) res = String(calculate(a, b, operator));
         }
 
-        function highlightOperator(operator) {
-            const operators = document.getElementsByClassName("operator") || [];
-            for (let i = 0; i < operators.length; i++) {
-                const key = operators[i].dataset.key;
-
-                if (key === operator) operators[i].classList.add("highlighted");
-                else operators[i].classList.remove("highlighted");
-            }
+        function calculate(a, b, operator) {
+            if (operator === "+") return Number(a) + Number(b);
+            if (operator === "-") return Number(a) - Number(b);
+            if (operator === "x") return Number(a) * Number(b);
+            if (operator === "/") return isFinite(Number(a) / Number(b)) ? Number(a) / Number(b) : 0; // to handle Infinity value
         }
 
-        function renderScreen(val) {
-            displayEle.innerText = val;
+        function renderScreen() {
+            screenEle.innerText = res;
         }
+        renderScreen();
     </script>
 </body>
 

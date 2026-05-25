@@ -7,112 +7,121 @@
     <title>Area Selector</title>
     <style>
         body {
-            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 0;
         }
 
-        #content {
-            text-align: center;
-        }
-
-        #board {
-            width: fit-content;
-            border: 0.5px solid black;
-        }
-
-        .row {
+        .content {
             display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100vh;
             align-items: center;
+            justify-content: center;
+            background-color: whitesmoke;
         }
 
-        .cell {
-            width: 40px;
-            height: 40px;
-            border: 0.5px solid black;
+        .grid {
+            display: grid;
+            border: 1px solid black;
         }
 
-        .filled {
-            background-color: aquamarine;
+        .box {
+            width: 30px;
+            height: 30px;
+            border: 1px solid black;
+            box-sizing: border-box;
+        }
+
+        .hover {
+            background-color: bisque;
         }
     </style>
 </head>
 
 <body>
-    <div id="content">
+    <div class="content">
         <h3>Click & hold on a box and drag to select multiple boxes</h3>
-        <div id="board"></div>
+        <section class="grid" id="grid"></section>
     </div>
 
     <script>
-        const boardEle = document.getElementById("board");
-
-        const WINDOW_WIDTH = window.innerWidth - 100, WINDOW_HEIGHT = window.innerHeight - 150;
-        const CELL_DIMN = 40, CELL_BORDER_WIDTH = 0.5;
-        const VERTICAL_CELL_COUNT = Math.floor(WINDOW_HEIGHT / CELL_DIMN);
-        const HORIZONTAL_CELL_COUNT = Math.floor(WINDOW_WIDTH / CELL_DIMN);
-        const BOARD_OFFSET_LEFT = boardEle.offsetLeft, BOARD_OFFSET_TOP = boardEle.offsetTop;
-
-        let isHolding = false;
-        let timer;
-
-        let startCursorPosInBoardX, startCursorPosInBoardY;
-        let currCursorPosInBoardX, currCursorPosInBoardY;
-
-        boardEle.addEventListener('mousedown', handleMouseDown);
-        boardEle.addEventListener('mouseup', handleBoardMouseUp);
-        boardEle.addEventListener("mousemove", handleBoardMouseMove);
-
-        function handleMouseDown(e) {
-            startCursorPosInBoardX = e.clientX - BOARD_OFFSET_LEFT;
-            startCursorPosInBoardY = e.clientY - BOARD_OFFSET_TOP;
-
-            timer = setTimeout(function() { isHolding = true; }, 200); // simulating hold event
-        }
-
-        function handleBoardMouseUp() {
-            clearTimeout(timer);
-            isHolding = false;
-
-            startCursorPosInBoardX = undefined, startCursorPosInBoardY = undefined;
-            currCursorPosInBoardX = undefined, currCursorPosInBoardY = undefined;
-            renderBoard();
-        }
-
-        function handleBoardMouseMove(e) {
-            if (isHolding) { // if mouse is hold and moved
-                currCursorPosInBoardX = e.clientX - BOARD_OFFSET_LEFT;
-                currCursorPosInBoardY = e.clientY - BOARD_OFFSET_TOP;
-
-                renderBoard();
+        // utils & constants
+        function debounce(func, delay) {
+            let timer;
+            return function(...args) {
+                if (timer) clearTimeout(timer);
+                timer = setTimeout(() => {
+                    func.call(this, ...args)
+                }, delay);
             }
         }
 
-        renderBoard();
-        function renderBoard() {
-            const startCellX = Math.ceil(startCursorPosInBoardX / (CELL_DIMN + 2 * CELL_BORDER_WIDTH)) - 1;
-            const startCellY = Math.ceil(startCursorPosInBoardY / (CELL_DIMN + 2 * CELL_BORDER_WIDTH)) - 1;
+        const BOX_DIM = 30;
 
-            const endCellX = Math.ceil(currCursorPosInBoardX / (CELL_DIMN + 2 * CELL_BORDER_WIDTH)) - 1;
-            const endCellY = Math.ceil(currCursorPosInBoardY / (CELL_DIMN + 2 * CELL_BORDER_WIDTH)) - 1;
 
-            const tempEle = document.createElement("div");
-            for (let i = 0; i < VERTICAL_CELL_COUNT; i++) {
-                const rowEle = document.createElement("div");
-                rowEle.classList.add("row");
+        // event handlers
+        let isMouseDown = false;
+        let startIdx = {}, endIdx = {};
 
-                for (let j = 0; j < HORIZONTAL_CELL_COUNT; j++) {
-                    const cellEle = document.createElement("div");
-                    cellEle.classList.add("cell");
+        const wWidth = window.innerWidth;
+        const wHeight = window.innerHeight;
 
-                    if ((j >= startCellX && j <= endCellX) && (i >= startCellY && i <= endCellY)) cellEle.classList.add("filled"); // if mouse moved down-right (clockwise)
-                    if ((j >= endCellX && j <= startCellX) && (i >= endCellY && i <= startCellY)) cellEle.classList.add("filled"); // if mouse moved top-left (anti-clockwise)
+        const rows = Math.floor(wHeight / BOX_DIM) - 2;
+        const cols = Math.floor(wWidth / BOX_DIM) - 2;
 
-                    rowEle.append(cellEle);
+        const gridEle = document.getElementById("grid");
+        gridEle.style.gridTemplateRows = "repeat(" + rows + ", 1fr)";
+        gridEle.style.gridTemplateColumns = "repeat(" + cols + ", 1fr)";
+        renderGrid(rows, cols);
+
+
+        gridEle.addEventListener("mousedown", function(e) {
+            isMouseDown = true;
+
+            const { row, column } = e.target.dataset;
+            startIdx = { row, column };
+            endIdx = { row, column };
+            renderGrid();
+        });
+
+        gridEle.addEventListener("mousemove", function(e) {
+            if (isMouseDown === true) {
+                const { row, column } = e.target.dataset;
+                endIdx = { row, column };
+                debouncedRenderGrid();
+            }
+        });
+
+        gridEle.addEventListener("mouseup", function(e) {
+            isMouseDown = false;
+            startIdx = {}, endIdx = {};
+            renderGrid();
+        });
+
+        const debouncedRenderGrid = debounce(renderGrid, 10);
+        function renderGrid() {
+            console.log("renderGrid")
+            const frag = document.createElement("div");
+            for (let r = 1; r <= rows; r++) {
+                for (let c = 1; c <= cols; c++) {
+                    const boxEle = document.createElement("div");
+                    boxEle.classList.add("box");
+                    boxEle.dataset.row = r;
+                    boxEle.dataset.column = c;
+
+                    if (Object.keys(startIdx).length && Object.keys(endIdx).length) {
+                        if (
+                            (r >= Math.min(startIdx.row, endIdx.row) && c >= Math.min(startIdx.column, endIdx.column))
+                            && (r <= Math.max(startIdx.row, endIdx.row) && c <= Math.max(startIdx.column, endIdx.column))
+                        ) boxEle.classList.add("hover");
+                    }
+
+                    frag.appendChild(boxEle);
                 }
-
-                tempEle.append(rowEle);
             }
 
-            boardEle.innerHTML = tempEle.innerHTML;
+            gridEle.innerHTML = frag.innerHTML;
         }
     </script>
 </body>
