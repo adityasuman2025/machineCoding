@@ -6,150 +6,146 @@
     <meta charset="UTF-8" />
     <style>
         .content {
-            position: relative;
             display: flex;
             flex-direction: column;
+            width: 100%;
             height: 100vh;
             align-items: center;
             justify-content: center;
+            background-color: antiquewhite;
         }
 
-        .autoComplete {
+        .searchBox {
             width: 400px;
-
             position: relative;
+            box-sizing: border-box;
         }
 
-        #input {
+        #searchInput {
             width: 100%;
             height: 40px;
+            box-sizing: border-box;
         }
 
-        #suggestions {
-            background-color: white;
-            position: absolute;
-            top: 45px;
+        #suggestionBox {
             width: 100%;
-            border: 1px solid grey;
+            margin: 0px;
+            padding: 5px;
+            box-sizing: border-box;
+            position: absolute;
+            background-color: aliceblue;
+            list-style: none;
         }
 
-        .suggestion {
-            border-bottom: 1px solid grey;
+        #suggestionBox li {
+            list-style: none;
             margin-bottom: 2px;
             padding: 5px;
+            background-color: beige;
             cursor: pointer;
         }
 
-        .suggestion:last-child {
-            border-bottom: none;
-            margin-bottom: none;
-        }
-
-        .hidden {
+        .display-none {
             display: none;
         }
     </style>
 </head>
 
 <body>
-    <div class="content">
-        <div class="autoComplete">
-            <input type="text" id="input" />
-            <div id="suggestions" class="hidden">suggs</div>
+    <section class="content">
+        <div class="searchBox">
+            <input type="text" id="searchInput" autofocus="true" />
+            <ul class="display-none" id="suggestionBox"></ul>
         </div>
-        search box
-    </div>
+        hey
+    </section>
 
     <script type="text/javascript">
-        let fruits;
-
-        const inputEle = document.getElementById("input");
-        const suggestionsEle = document.getElementById("suggestions");
-        suggestionsEle.addEventListener("click", handleSuggestionClick);
-        inputEle.addEventListener("keyup", debounce(handleOnInputChange, 150));
-
-        function handleSuggestionClick({ target } = {}) {
-            const { id } = target.dataset || {};
-
-            if (id) {
-                inputEle.value = id;
-                suggestionsEle.classList.add("hidden"); // hiding suggestion container
-            }
-        }
-
-        const memoisedGetSuggestions = memoiseIt(getSuggestions);
-        async function getSuggestions(query) {
-            if (!fruits) fruits = await apiCall("https://jsonblob.com/api/1182868723773333504"); //api call will happen only once
-
-            return fruits.filter(i => i.toLowerCase().includes(query.toLowerCase()));
-        }
-
-        async function handleOnInputChange(e) {
-            const target = e.target;
-            const { value } = target || {};
-
-            if (value.trim()) {
-                const suggestions = await memoisedGetSuggestions(value);
-                renderSuggestion(suggestions);
-
-                suggestionsEle.classList.remove("hidden"); // displaying suggestion container
-            } else {
-                suggestionsEle.classList.add("hidden"); // hiding suggestion container
-            }
-        }
-
-        function renderSuggestion(suggestions) {
-            const suggItemsEle = document.createElement("div");
-            suggestions.forEach(i => {
-                const suggItemEle = document.createElement("div");
-                suggItemEle.classList.add("suggestion")
-                suggItemEle.innerText = i;
-                suggItemEle.dataset.id = i;
-
-                suggItemsEle.appendChild(suggItemEle);
-            });
-
-            suggestionsEle.innerHTML = suggItemsEle.innerHTML;
-        }
-
-
-        // utils
-        function memoiseIt(func) {
-            let cache = {};
-
-            return async function(...args) {
-                const key = JSON.stringify(args);
-
-                if (!cache.hasOwnProperty(key)) cache[key] = await func.call(this, ...args)
-
-                return cache[key];
-            }
-        }
-
+        // utils & constants
         function debounce(func, delay) {
             let timer;
             return function(...args) {
-                clearTimeout(timer);
+                if (timer) clearTimeout(timer);
                 timer = setTimeout(() => {
                     func.call(this, ...args)
                 }, delay);
             }
         }
 
-        function apiCall(apiUrl, method = "get", body) {
-            return new Promise(async function(resolve, reject) {
-                try {
-                    const resp = await fetch(apiUrl, {
-                        method,
-                        ...(method !== "get" ? { body: JSON.stringify(body) } : {})
-                    })
+        function memoiseIt(func) {
+            const cache = {};
 
-                    const jsonResp = await resp.json();
-                    resolve(jsonResp)
-                } catch (error) {
-                    reject(error);
-                }
+            return function(...args) {
+                const key = JSON.stringify(args);
+
+                if (!cache.hasOwnProperty(key)) cache[key] = func.call(this, ...args);
+
+                return cache[key];
+            }
+        }
+
+        async function apiCall(url) {
+            await fetch(url);
+            if (!resp.ok) throw new Error(`HTTP ${resp.status} ${resp.statusText}`);
+            return resp.json();
+        }
+
+        function mockApiCall(data) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    resolve(data);
+                }, 1000);
+            })
+        }
+
+        const DATA = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+
+
+        // event handlers
+        const inputEle = document.getElementById("searchInput");
+        const suggsBoxEle = document.getElementById("suggestionBox");
+
+        const memoisedGetSuggestions = memoiseIt(getSuggestions); // memoiseIt can memoise a async function too, for ref check coreJs/memoAsync
+        const debounceDandleInputChange = debounce(handleInputChange, 200);
+        inputEle.addEventListener("keyup", debounceDandleInputChange);
+        async function handleInputChange(e) {
+            const value = (e.target.value).trim();
+
+            const suggs = await memoisedGetSuggestions(value);
+            renderSuggestions(suggs);
+        }
+
+        suggsBoxEle.addEventListener("click", handleSuggestionClick);
+        function handleSuggestionClick(e) {
+            const id = e.target.dataset.id;
+            if (id) {
+                inputEle.value = id;
+                suggsBoxEle.classList.add("display-none")
+            }
+        }
+
+
+        // helpers
+        async function getSuggestions(qry) {
+            if (!qry) return [];
+            const data = await mockApiCall(DATA);  //  DATA; //
+            return data.filter(item => item.includes(qry));
+        }
+
+        function renderSuggestions(suggs) {
+            if (!suggs.length) return suggsBoxEle.classList.add("display-none");
+
+            const frag = document.createElement("div");
+            suggs.forEach(suggItem => {
+                const liEle = document.createElement("li");
+                liEle.innerText = suggItem;
+                liEle.dataset.id = suggItem;
+
+                frag.appendChild(liEle);
             });
+
+            suggsBoxEle.classList.remove("display-none");
+            suggsBoxEle.innerHTML = frag.innerHTML;
         }
     </script>
 </body>
