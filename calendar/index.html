@@ -8,258 +8,237 @@
 
     <style>
         body {
-            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 0;
         }
 
-        #content {
+        .content {
             display: flex;
-            align-content: center;
+            flex-direction: column;
+            width: 100%;
+            height: 100vh;
+            align-items: center;
             justify-content: center;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            background-color: whitesmoke;
         }
 
-        #calendar {
-            border: 1px solid grey;
+        .container {
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid black;
+            margin-bottom: 5px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             padding: 10px;
         }
 
-        #monthChanger {
-            margin: 5px 0px 15px 0px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        #monthChanger select {
-            width: 90px;
-            height: 40px;
-        }
-
-        #weekDays {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            color: gray;
-        }
-
-        .dummyCell {
-            width: 38px;
-            height: 38px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 1px;
-
-            pointer-events: none;
-        }
-
-        .sunday {
-            color: orangered;
-        }
-
-        #monthDates {
+        .grid {
             display: grid;
-            grid-template-columns: repeat(7, auto);
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin: 10px 0px;
         }
 
-        .cell {
-            border-radius: 100%;
-            width: 38px;
-            height: 38px;
+        .red {
+            color: red;
+        }
+
+        .box {
+            width: 40px;
+            height: 40px;
+            box-sizing: border-box;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 1px;
             cursor: pointer;
-            font-size: 15px;
         }
 
-        .currentDate {
+        .dummyBox {
+            width: 40px;
+            height: 40px;
+            box-sizing: border-box;
+        }
+
+        .today {
+            background-color: chocolate;
+            border-radius: 100%;
+            color: beige
+        }
+
+        .active {
             border: 1px solid grey;
+            border-radius: 100%;
         }
 
-        .todayDate {
-            background-color: aquamarine;
-        }
-
-        #selectedDate {
-            margin: 15px 0px 5px 0px;
-            font-size: 16px;
+        .date {
+            font-size: 18px;
             text-align: center;
         }
     </style>
 </head>
 
 <body>
-    <div id="content">
-        <div id="calendar">
-            <div id="monthChanger">
-                <button data-type="prev">prev</button>
-                <select data-type="month"></select>
-                <select data-type="year"></select>
-                <button data-type="next">next</button>
+    <section class="content">
+        <div class="container" id="screen">
+            <div class="header">
+                <button id="prev">prev</button>
+
+                <select id="month"></select>
+                <select id="year"></select>
+
+                <button id="next">next</button>
             </div>
 
-            <div id="weekDays"></div>
-            <div id="monthDates"></div>
-            <div id="selectedDate"></div>
+            <div class="grid" id="gridWeekdays"></div>
+            <div class="grid" id="grid"></div>
+            <div class="date" id="date">date</div>
         </div>
-    </div>
-
+    </section>
     <script type="text/javascript">
-        const WEEK_DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-        const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        const YEARS = new Array(102).fill(0).map((_, idx) => idx + 1999); // 1999 - 2100
-        const TODAY = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), 0, 0, 0);
 
-        let currDate = new Date();
-
-        const monthChangerEle = document.getElementById("monthChanger");
-        const weekDaysEle = document.getElementById("weekDays");
-        const monthDatesEle = document.getElementById("monthDates");
-        const selectedDateEle = document.getElementById("selectedDate");
-        monthDatesEle.addEventListener("click", handleDateClick);
-        monthChangerEle.addEventListener("change", handleChange);
-        monthChangerEle.addEventListener("click", handleClick);
-
-
-        // default renders
-        renderSelectField(MONTHS, "month", (item, idx) => currDate.getMonth() === idx);
-        renderSelectField(YEARS, "year", (item, idx) => currDate.getFullYear() === item);
-        renderWeekdays();
-        renderDates();
-
+        const MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];;
+        const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
         // event handlers
-        function handleClick(e) {
-            const { type } = e?.target?.dataset || {};
+        let date = new Date();
 
-            if (["prev", "next"].includes(type)) {
-                const currDateMonth = currDate.getMonth(), currDateYear = currDate.getFullYear();
-                let newDateMonth = currDateMonth, newDateYear = currDateYear;
-                if (type == "prev") {
-                    newDateMonth = currDateMonth - 1 < 0 ? 11 : currDateMonth - 1;
-                    newDateYear = currDateMonth - 1 < 0 ? currDateYear - 1 : currDateYear
-                } else if (type == "next") {
-                    newDateMonth = currDateMonth + 1 > 11 ? 0 : currDateMonth + 1;
-                    newDateYear = currDateMonth + 1 > 11 ? currDateYear + 1 : currDateYear;
-                }
+        const gridEle = document.getElementById("grid");
+        const dateEle = document.getElementById("date");
+        const preBtnEle = document.getElementById("prev");
+        const nextBtnEle = document.getElementById("next");
+        const monthSelectEle = document.getElementById("month");
+        const yearSelectEle = document.getElementById("year");
 
-                currDate = new Date(newDateYear, newDateMonth, 1);
-
-                renderDates();
-                renderSelectField(MONTHS, "month", (item, idx) => currDate.getMonth() === idx);
-                renderSelectField(YEARS, "year", (item, idx) => currDate.getFullYear() === item);
-            }
-        }
-
-        function handleChange(e) {
-            const { type } = e?.target?.dataset || {};
-            const value = e?.target?.value;
-
-            const currDateMonth = currDate.getMonth(), currDateYear = currDate.getFullYear();
-            if (type == "month") {
-                currDate = new Date(currDateYear, MONTHS.indexOf(value), 1);
-                renderDates();
-            } else if (type == "year") {
-                currDate = new Date(value, currDateMonth, 1);
-                renderDates();
-            }
-        }
-
+        gridEle.addEventListener("click", handleDateClick);
         function handleDateClick(e) {
-            const { date, month, year } = e?.target?.dataset || {};
-
-            if (date && month >= 0 && year) {
-                currDate = new Date(year, month, date);
-                renderDates();
+            const fullDate = e.target.dataset.fullDate;
+            if (fullDate) {
+                date = new Date(fullDate);
+                renderGrid();
+                renderDate();
             }
         }
 
+        preBtnEle.addEventListener("click", handlePrevClick);
+        function handlePrevClick() {
+            date = new Date(date.getFullYear(), date.getMonth() - 1, 1);
+            renderGrid();
+            renderDate();
 
-        // rendering functions
-        function renderSelectField(data, type, checkSelectedOptionCB) {
-            const selectFieldEle = document.querySelector(`#monthChanger [data-type="${type}"]`);
+            renderYearSelectBox();
+            renderMonthSelectBox();
+        }
 
-            const tempEle = document.createElement("div");
-            data.forEach((item, idx) => {
+        nextBtnEle.addEventListener("click", handleNextClick);
+        function handleNextClick() {
+            date = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+            renderGrid();
+            renderDate();
+
+            renderYearSelectBox();
+            renderMonthSelectBox();
+        }
+
+        monthSelectEle.addEventListener("change", handleMonthChange);
+        function handleMonthChange(e) {
+            date = new Date(date.getFullYear(), MONTHS.indexOf(e.target.value), 1);
+            renderGrid();
+            renderDate();
+        }
+
+        yearSelectEle.addEventListener("change", handleYearChange);
+        function handleYearChange(e) {
+            date = new Date(e.target.value, date.getMonth(), 1);
+            renderGrid();
+            renderDate();
+        }
+
+        // renderers
+        function renderGrid() {
+            const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+            const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+            const firstDayday = firstDay.getDay();
+            const lastDaydate = lastDay.getDate();
+
+            const frag = document.createElement("div");
+            // adding dummy cell before starting of fast date of the month for the active date
+            new Array(firstDayday).fill(0).forEach(item => {
+                const cell = document.createElement("div");
+                cell.classList.add("dummyBox");
+                frag.appendChild(cell);
+            });
+
+            // adding active date, date cells
+            new Array(lastDaydate).fill(0).forEach((_, idx) => {
+                const thisDate = new Date(date.getFullYear(), date.getMonth(), idx + 1);
+                const cell = document.createElement("div");
+                cell.innerText = idx + 1;
+                cell.dataset.date = idx + 1;
+                cell.dataset.fullDate = thisDate;
+
+                cell.classList.add("box");
+                if ((idx + firstDayday) % 7 === 0) cell.classList.add("red");
+                if (thisDate.toDateString() === new Date().toDateString()) cell.classList.add("today");
+                if (thisDate.toDateString() === date.toDateString()) cell.classList.add("active");
+
+                frag.appendChild(cell);
+            });
+
+            gridEle.innerHTML = frag.innerHTML;
+        }
+        renderGrid();
+
+        function renderDate() {
+            dateEle.innerText = date.toDateString();
+        }
+        renderDate();
+
+        (function renderWeekdays() {
+            const gridWeekdaysEle = document.getElementById("gridWeekdays");
+
+            WEEKDAYS.forEach((item, idx) => {
+                const ele = document.createElement("div");
+                ele.innerText = item[0];
+                ele.classList.add("box");
+                if (idx === 0) ele.classList.add("red");
+
+                gridWeekdaysEle.appendChild(ele)
+            })
+        })();
+
+        function renderMonthSelectBox() {
+            const frag = document.createElement("div");
+            MONTHS.forEach((item, idx) => {
                 const optionEle = document.createElement("option");
-                optionEle.innerText = item;
                 optionEle.value = item;
-                optionEle.defaultSelected = checkSelectedOptionCB(item, idx)
-
-                tempEle.append(optionEle);
+                optionEle.innerText = item;
+                if (idx === date.getMonth()) optionEle.defaultSelected = true
+                frag.appendChild(optionEle);
             });
 
-            selectFieldEle.innerHTML = tempEle.innerHTML;
-        }
+            monthSelectEle.innerHTML = frag.innerHTML;
+        };
+        renderMonthSelectBox();
 
-        function renderWeekdays() {
-            const tempEle = document.createElement("div");
-
-            WEEK_DAYS.forEach((day, idx) => {
-                const weekDayEle = document.createElement("div");
-                weekDayEle.innerText = day[0];
-                weekDayEle.classList.add("cell");
-
-                if (idx === 0) weekDayEle.classList.add("sunday"); // highlighting sunday
-
-                tempEle.append(weekDayEle);
+        function renderYearSelectBox() {
+            const frag = document.createElement("div");
+            new Array(date.getFullYear() - 2000).fill(0).forEach((item, idx) => {
+                const thisYear = 2000 + idx + 1;
+                const optionEle = document.createElement("option");
+                optionEle.value = thisYear
+                optionEle.innerText = thisYear
+                if (thisYear === date.getFullYear()) optionEle.defaultSelected = true
+                frag.appendChild(optionEle);
             });
 
-            weekDaysEle.innerHTML = tempEle.innerHTML;
+            yearSelectEle.innerHTML = frag.innerHTML;
         }
-
-        function renderDates() {
-            // getting first and last day/date of the month of the current date
-            const currDateDate = currDate.getDate(), currDateMonth = currDate.getMonth(), currDateYear = currDate.getFullYear();
-            const firstDayOfTheMonthOfCurrDate = new Date(currDateYear, currDateMonth, 1);
-            const lastDayOfTheMonthOfCurrDate = new Date(currDateYear, currDateMonth + 1, 0);
-
-            const dayOfFirstDayOfTheMonthOfCurrDate = firstDayOfTheMonthOfCurrDate.getDay();
-            const dateOfLastDayOfTheMonthOfCurrDate = lastDayOfTheMonthOfCurrDate.getDate();
-            // getting first and last day/date of the month of the current date
-
-
-            // for placing the first date of the month at correct day position, we need to push dummy cell elements before the first date
-            const tempEle = document.createElement("div");
-            for (let i = 0; i < dayOfFirstDayOfTheMonthOfCurrDate; i++) {
-                const dummyCellEle = document.createElement("div");
-                dummyCellEle.classList.add("dummyCell");
-
-                tempEle.append(dummyCellEle);
-            }
-            // for placing the first date of the month at correct day position, we need to push dummy cell elements before the first date
-
-
-            // first date to last date of the month
-            for (let i = 1; i <= dateOfLastDayOfTheMonthOfCurrDate; i++) {
-                const thisDate = new Date(currDateYear, currDateMonth, i)
-                const dateCellEle = document.createElement("div");
-                dateCellEle.classList.add("cell");
-                dateCellEle.innerText = i;
-                dateCellEle.dataset.date = i;
-                dateCellEle.dataset.month = currDateMonth;
-                dateCellEle.dataset.year = currDateYear;
-
-                if (thisDate.getTime() === TODAY.getTime()) dateCellEle.classList.add("todayDate"); // highlighting the today date
-                if (i === currDateDate) dateCellEle.classList.add("currentDate"); // highlighting the current date
-                if ((dayOfFirstDayOfTheMonthOfCurrDate + i - 1) % 7 === 0) dateCellEle.classList.add("sunday"); // highlighting sunday
-
-                tempEle.append(dateCellEle);
-            }
-            // first date to last date of the month
-
-            monthDatesEle.innerHTML = tempEle.innerHTML;
-            renderSelectedDateDate(currDate);
-        }
-
-        function renderSelectedDateDate(currDate) {
-            selectedDateEle.innerText = String(currDate).substring(0, 15);
-        }
+        renderYearSelectBox();
     </script>
 </body>
 
