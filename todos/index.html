@@ -49,12 +49,12 @@
 
         renderToDos();
         function renderToDos() {
-            const tempEle = document.createElement("div");
+            const tempEle = document.createDocumentFragment();
             todos.forEach((todo, idx) => {
                 const todoEle = document.createElement("div");
                 const toDoInputEle = document.createElement("input");
                 toDoInputEle.type = "text";
-                toDoInputEle.setAttribute("value", todo.text); // `toDoInputEle.value = todo.text` was not working, don't know why
+                toDoInputEle.value = todo.text;
                 toDoInputEle.dataset.toDoIdx = idx;
 
                 const doneBtnEle = document.createElement("button");
@@ -72,7 +72,7 @@
                 tempEle.append(todoEle);
             });
 
-            todosEle.innerHTML = tempEle.innerHTML;
+            todosEle.replaceChildren(tempEle);
         }
 
         function handleInputChange(e) {

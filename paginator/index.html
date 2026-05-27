@@ -75,7 +75,7 @@
 
         renderPaginationButtons();
         function renderPaginationButtons() {
-            const tempEle = document.createElement("div");
+            const tempEle = document.createDocumentFragment();
 
             // prev btn
             const prevBtnEle = getBtnHtml("<", true, "prev");
@@ -131,7 +131,7 @@
             tempEle.append(nextBtnEle);
             // next btn
 
-            paginatorEle.innerHTML = tempEle.innerHTML;
+            paginatorEle.replaceChildren(tempEle);
         }
 
         function getBtnHtml(text, isNotNumber = false, type) {

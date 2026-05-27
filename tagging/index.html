@@ -63,16 +63,14 @@
         }
 
         function renderInputBox(left, top) {
-            const tempEle = document.createElement("div");
             const inputEle = document.createElement("input");
             inputEle.style.top = top + "px";
             inputEle.style.left = left + "px";
             inputEle.style.position = "absolute";
 
-            tempEle.append(inputEle);
-            relativeEle.innerHTML = tempEle.innerHTML;
+            relativeEle.replaceChildren(inputEle);
 
-            relativeEle.querySelector("input").focus(); // focusing the new input field
+            inputEle.focus(); // focusing the new input field
         }
 
         function handleInputChange(e) {
@@ -81,13 +79,13 @@
                 tags[currClickedPosition] = value;
 
                 currClickedPosition = ""; // clearing the current clicked position
-                relativeEle.innerHTML = ""; // hiding input field
+                relativeEle.replaceChildren(); // hiding input field
                 renderTags(tags)
             }
         }
 
         function renderTags(tags) {
-            const tempEle = document.createElement("div");
+            const tempEle = document.createDocumentFragment();
             Object.keys(tags).forEach(tagPos => {
                 const tagEle = document.createElement("div");
                 tagEle.classList.add("tag");
@@ -100,7 +98,7 @@
                 tempEle.append(tagEle);
             });
 
-            tagsEle.innerHTML = tempEle.innerHTML;
+            tagsEle.replaceChildren(tempEle);
         }
 
     </script>

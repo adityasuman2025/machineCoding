@@ -87,7 +87,7 @@
         function renderView() {
             const uniqueCompPoints = getUniquePoints(selectedProducts);
 
-            const wrapperEle = document.createElement("div");
+            const wrapperEle = document.createDocumentFragment();
             const tableEle = document.createElement("table");
 
             tableEle.append(renderTableHead(selectedProducts)); // rendering table head
@@ -95,7 +95,7 @@
 
             // rendering table
             wrapperEle.append(tableEle);
-            contentEle.innerHTML = wrapperEle.innerHTML;
+            contentEle.replaceChildren(wrapperEle);
         }
 
         function renderPointTitle(point) {
@@ -200,7 +200,7 @@
 
         function renderAddBtn() {
             const btnEle = document.createElement("button");
-            btnEle.innerHTML = "+";
+            btnEle.innerText = "+";
             btnEle.dataset.btnId = "add";
             // btnEle.addEventListener("click", handleAddBtnClick);  // does not works
 

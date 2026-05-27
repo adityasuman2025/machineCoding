@@ -183,7 +183,7 @@
 
         renderBoard();
         function renderBoard() {
-            const tempEle = document.createElement("div");
+            const tempEle = document.createDocumentFragment();
 
             for (let i = 0; i < DIMN; i++) {
                 const rowEle = document.createElement("div");
@@ -207,7 +207,7 @@
                 tempEle.append(rowEle);
             }
 
-            boardEle.innerHTML = tempEle.innerHTML;
+            boardEle.replaceChildren(tempEle);
         }
 
         renderScore(score);

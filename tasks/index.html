@@ -80,7 +80,7 @@
 
         renderStages();
         function renderStages() {
-            const tempEle = document.createElement("div");
+            const tempEle = document.createDocumentFragment();
             stages.forEach(stage => {
                 const stageEle = document.createElement("div");
                 stageEle.classList.add("stage");
@@ -95,11 +95,11 @@
                 tempEle.append(stageEle);
             });
 
-            stagesEle.innerHTML = tempEle.innerHTML;
+            stagesEle.replaceChildren(tempEle);
         }
 
         function renderTasksOfASTage(stage, tasks) {
-            const tempEle = document.createElement("div");
+            const tempEle = document.createDocumentFragment();
             tasks.forEach((task, idx) => {
                 const taskEle = document.createElement("div");
                 taskEle.dataset.taskIdx = idx;
