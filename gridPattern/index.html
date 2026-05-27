@@ -51,7 +51,7 @@
         contentEle.addEventListener("click", handleGridClick);
 
         function renderGrid() {
-            const gridEle = document.createElement("div");
+            const frag = document.createDocumentFragment();
 
             grid.forEach((row, rowIdx) => {
                 const gridRow = document.createElement("div");
@@ -70,10 +70,10 @@
                     gridRow.append(gridcell);
                 });
 
-                gridEle.append(gridRow);
+                frag.append(gridRow);
             })
 
-            contentEle.innerHTML = gridEle.innerHTML;
+            contentEle.replaceChildren(frag);
         }
         renderGrid();
 

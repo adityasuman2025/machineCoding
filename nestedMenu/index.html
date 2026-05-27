@@ -8,82 +8,65 @@
 
     <style>
         body {
-            font-family: Arial, Helvetica, sans-serif;
-        }
-
-        .menu {
-            background-color: white;
-            /* padding: 5px; */
-            border: 1px solid grey;
-            width: fit-content;
-            border-radius: 5px;
+            margin: 0;
+            padding: 0;
         }
 
         .menuItem {
+            padding: 10px;
+            background-color: antiquewhite;
+            border: 1px solid grey;
             position: relative;
-            border-bottom: 1px solid grey;
-            padding: 5px;
-            min-width: 150px;
-            width: fit-content;
-            cursor: pointer;
+            width: 200px;
+            box-sizing: border-box;
         }
 
-        .menuTitle {}
-
-        .menuWrapper {
+        .absolute {
             position: absolute;
+            top: 50%;
             left: 100%;
-            top: 0px;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .visible {
-            display: block;
         }
     </style>
 </head>
 
 <body>
-    <div id="content"></div>
+    <section class="content" id="content"></section>
 
     <script type="text/javascript">
         const menu = [
             { title: "why prep" },
             {
                 title: "courses",
-                subMenu: [
+                menu: [
                     { title: "DSA to development" },
                     {
                         title: "for professionals",
-                        subMenu: [{ title: "DSA Classes Live" }, { title: "System Design Live" }, { title: "Java BE Live" }, { title: "Devops Live" }]
+                        menu: [{ title: "DSA Classes Live" }, { title: "System Design Live" }, { title: "Java BE Live" }, { title: "Devops Live" }]
                     },
                     {
                         title: "for students",
-                        subMenu: [{ title: "Interview Prep Course" }, { title: "Data Science Live" }, { title: "Gate CS / IT 2024" }, { title: "Master CP" }]
+                        menu: [{ title: "Interview Prep Course" }, { title: "Data Science Live" }, { title: "Gate CS / IT 2024" }, { title: "Master CP" }]
                     }
                 ]
             },
             {
                 title: "tutorials",
-                subMenu: [
+                menu: [
                     { title: "DSA for beginners" },
                     {
                         title: "DSA",
-                        subMenu: [
+                        menu: [
                             { title: "Arrays" },
                             { title: "String" },
                             {
                                 title: "LinkedList",
-                                subMenu: [{ title: "Single LinkedList" }, { title: "Double LinkedList" }, { title: "Circular LinkedList" }]
+                                menu: [{ title: "Single LinkedList" }, { title: "Double LinkedList" }, { title: "Circular LinkedList" }]
                             },
                             { title: "Stack" },
                             { title: "Queue" },
                             {
                                 title: "Tree",
-                                subMenu: [{ title: "BST" }, { title: "Binary Tree" }, { title: "AVL Tree" }]
+                                menu: [{ title: "BST" }, { title: "Binary Tree" }, { title: "AVL Tree" }]
                             },
                             { title: "Heap" },
                             { title: "Graph" },
@@ -91,17 +74,17 @@
                     },
                     {
                         title: "System Design",
-                        subMenu: [
+                        menu: [
                             {
                                 title: "Design Pattern",
-                                subMenu: [{ title: "factory" }]
+                                menu: [{ title: "factory" }]
                             },
                             {
                                 title: "Design Tutorial",
-                                subMenu: [
+                                menu: [
                                     {
                                         title: "What is system design",
-                                        subMenu: [{ title: "key terminology" }, { title: "databases" }, { title: "HLD" }, { title: "LLD" }]
+                                        menu: [{ title: "key terminology" }, { title: "databases" }, { title: "HLD" }, { title: "LLD" }]
                                     }
                                 ]
                             }
@@ -110,103 +93,50 @@
                 ]
             }
         ];
-        let activeMenuItemKeys = []; // variable to store key of all expanded menu items
+        let activeIds = [];
 
-        const contentEle = document.getElementById("content");
-
-        const handleMouseHoverOP = debounce(handleMouseHover, 200);
-        contentEle.addEventListener("mouseover", handleMouseHoverOP);
-        contentEle.addEventListener("click", function(e) {
-            e.stopPropagation(); // to stop event bubbling of menu item click // because we have a click event listener applied at document to hide the expanded menu
-        });
-
-        document.addEventListener("click", handleDocumentClick);
-
-        renderMenu();
-        function renderMenu() {
-            contentEle.innerHTML = getMenuHtml(menu, "").innerHTML;
+        const contentItem = document.getElementById("content");
+        contentItem.addEventListener("click", handleMenuClick);
+        function handleMenuClick(e) {
+            const { id } = e.target.dataset;
+            if (id) {
+                activeIds = [...getAncestorIds(id)];
+                contentItem.replaceChildren(renderMenu(menu, ""));
+            }
         }
 
-        function getMenuHtml(menu, parentKey) {
-            const tempEle = document.createElement("div");
+        function getAncestorIds(id) {
+            let temp = "";
+            return id.split(".").reduce((acc, item) => {
+                temp = (temp ? temp + "." : "") + item;
+                return [...acc, temp];
+            }, []);
+        }
 
-            const menuEle = document.createElement("div");
-            menuEle.classList.add("menu");
-            menu.forEach(({ title, subMenu = [] }, idx) => {
-                const key = (parentKey ? parentKey + "_" : "") + idx;
+        function renderMenu(menu, parentIdx) {
+            const frag = document.createDocumentFragment();
 
+            menu.forEach((item, idx) => {
                 const menuItemEle = document.createElement("div");
+                menuItemEle.innerText = item.title + (item.menu?.length ? " >" : "");
                 menuItemEle.classList.add("menuItem");
 
-                // menu item's title
-                const menuTitleEle = document.createElement("div");
-                menuTitleEle.innerText = title + (subMenu && subMenu.length ? " >" : "");
-                menuTitleEle.dataset.key = key;
-                menuItemEle.append(menuTitleEle);
-                // menu item's title
+                const eleId = (parentIdx ? parentIdx + "." : "") + idx;
+                menuItemEle.dataset.id = eleId;
 
-                // if sub menu exists then appending it it the curr menu item
-                if (subMenu && subMenu.length) {
-                    const subMenuWrapperEle = document.createElement("div");
-                    subMenuWrapperEle.classList.add("menuWrapper");
-
-                    if (activeMenuItemKeys.includes(key)) { // it current item's key exists in activeMenuItemKeys array, then making its subMenu visible
-                        subMenuWrapperEle.classList.add("visible");
-                    } else subMenuWrapperEle.classList.add("hidden");
-
-                    subMenuWrapperEle.innerHTML = getMenuHtml(subMenu, key).innerHTML;
-                    menuItemEle.append(subMenuWrapperEle);
+                if (item.menu?.length && activeIds.includes(eleId)) {
+                    const childEle = document.createElement("div");
+                    childEle.classList.add("absolute");
+                    childEle.append(renderMenu(item.menu, eleId));
+                    menuItemEle.append(childEle);
                 }
-                // if sub menu exists then appending it it the curr menu item
 
-                menuEle.append(menuItemEle);
+                frag.append(menuItemEle);
             });
-            tempEle.append(menuEle);
 
-
-            return tempEle;
+            return frag;
         }
-
-        function handleMouseHover(e) {
-            const key = e.target.dataset.key;
-            if (key) { // if hovered over a menu item
-                const keyArr = key.split("_");
-
-                // if hovering over a children, then its parent, parent's parent and so on, will also get expanded
-                activeMenuItemKeys = [...chances(keyArr)]; // function get keys of all the parent's of the current menu item (key)
-
-                renderMenu(); // re-rendering menu on hover
-            }
-        }
-
-        function chances(inp) {
-            let out = [];
-
-            let temp = [];
-            for (let i = 0; i < inp.length; i++) {
-                temp.push(inp[i]);
-                out.push([...temp]);
-            }
-
-            return out.map(arr => arr.reduce((acc, i) => (acc ? acc + "_" : "") + i, ""));
-        }
-
-        function handleDocumentClick() {
-            // remove expansion of menu items on document (anywhere else click other than menu)
-            activeMenuItemKeys = [];
-            renderMenu();
-        }
-
-        // utils
-        function debounce(func, delay) {
-            let timer;
-            return function(...args) {
-                clearTimeout(timer);
-                timer = setTimeout(() => {
-                    func.call(this, ...args);
-                }, delay);
-            }
-        }
+        contentItem.replaceChildren(renderMenu(menu, ""));
     </script>
 </body>
 

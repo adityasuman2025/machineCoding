@@ -59,7 +59,6 @@
 
         const BOX_DIM = 30;
 
-
         // event handlers
         let isMouseDown = false;
         let startIdx = {}, endIdx = {};
@@ -74,7 +73,6 @@
         gridEle.style.gridTemplateRows = "repeat(" + rows + ", 1fr)";
         gridEle.style.gridTemplateColumns = "repeat(" + cols + ", 1fr)";
         renderGrid(rows, cols);
-
 
         gridEle.addEventListener("mousedown", function(e) {
             isMouseDown = true;
@@ -102,7 +100,7 @@
         const debouncedRenderGrid = debounce(renderGrid, 10);
         function renderGrid() {
             console.log("renderGrid")
-            const frag = document.createElement("div");
+            const frag = document.createDocumentFragment();
             for (let r = 1; r <= rows; r++) {
                 for (let c = 1; c <= cols; c++) {
                     const boxEle = document.createElement("div");
@@ -121,7 +119,7 @@
                 }
             }
 
-            gridEle.innerHTML = frag.innerHTML;
+            gridEle.replaceChildren(frag);
         }
     </script>
 </body>

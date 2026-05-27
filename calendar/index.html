@@ -165,7 +165,7 @@
             const firstDayday = firstDay.getDay();
             const lastDaydate = lastDay.getDate();
 
-            const frag = document.createElement("div");
+            const frag = document.createDocumentFragment();
             // adding dummy cell before starting of fast date of the month for the active date
             new Array(firstDayday).fill(0).forEach(item => {
                 const cell = document.createElement("div");
@@ -189,7 +189,7 @@
                 frag.appendChild(cell);
             });
 
-            gridEle.innerHTML = frag.innerHTML;
+            gridEle.replaceChildren(frag);
         }
         renderGrid();
 
@@ -212,7 +212,7 @@
         })();
 
         function renderMonthSelectBox() {
-            const frag = document.createElement("div");
+            const frag = document.createDocumentFragment();
             MONTHS.forEach((item, idx) => {
                 const optionEle = document.createElement("option");
                 optionEle.value = item;
@@ -221,12 +221,12 @@
                 frag.appendChild(optionEle);
             });
 
-            monthSelectEle.innerHTML = frag.innerHTML;
+            monthSelectEle.replaceChildren(frag);
         };
         renderMonthSelectBox();
 
         function renderYearSelectBox() {
-            const frag = document.createElement("div");
+            const frag = document.createDocumentFragment();
             new Array(date.getFullYear() - 2000).fill(0).forEach((item, idx) => {
                 const thisYear = 2000 + idx + 1;
                 const optionEle = document.createElement("option");
@@ -236,7 +236,7 @@
                 frag.appendChild(optionEle);
             });
 
-            yearSelectEle.innerHTML = frag.innerHTML;
+            yearSelectEle.replaceChildren(frag);
         }
         renderYearSelectBox();
     </script>

@@ -55,20 +55,10 @@
         }
 
         function viewRenderer(comments, idPath = "") {
-            return comments.reduce((acc, { comment, replies } = {}, idx) => {
-                const id = (idPath ? idPath + "." : "") + idx;
-                // let thisCommentHtml = `
-                //     <div class="commentBox">
-                //         <div>
-                //             ${comment}
-                //             <button data-id="${id}" data-type="delete">delete</button>
-                //         </div>
+            const frag = document.createDocumentFragment();
 
-                //         <textarea id="${id}"></textarea>
-                //         <button data-id="${id}" data-type="reply" data-replycount="${replies.length}">reply</button>
-                //         <div class="replies">${viewRenderer(replies, id)}</div>
-                //     </div>
-                // `;
+            comments.forEach(({ comment, replies } = {}, idx) => {
+                const id = (idPath ? idPath + "." : "") + idx;
 
                 const commentBox = document.createElement("div");
                 commentBox.classList.add("commentBox");
@@ -92,24 +82,21 @@
 
                 const repliesDiv = document.createElement("div");
                 repliesDiv.classList.add("replies");
-                repliesDiv.innerHTML = viewRenderer(replies, id)
+                repliesDiv.appendChild(viewRenderer(replies, id));
 
                 commentBox.appendChild(commentText);
                 commentBox.appendChild(textEle);
                 commentBox.appendChild(replyBtn);
                 commentBox.appendChild(repliesDiv);
 
-                const temp = document.createElement("div");
-                temp.appendChild(commentBox);
+                frag.appendChild(commentBox);
+            });
 
-                return acc + temp.innerHTML;
-            }, "");
+            return frag;
         }
 
         function render() {
-            console.log("comments", comments)
-            const html = viewRenderer(comments);
-            commentsContainerEle.innerHTML = html;
+            commentsContainerEle.replaceChildren(viewRenderer(comments));
         }
         render();
 
