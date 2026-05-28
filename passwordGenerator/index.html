@@ -15,100 +15,63 @@
 <body>
     <div id="content"></div>
     <script>
+        /* 
+            In a password is mandatory
+            1. at least 1 number
+            2. at least 1 special char
+            3. at least 1 Uppercase alphabet
+            4. at least 1 Lowercase alphabet
+        */
+
+        const PASS_LENGTH = 15;
+        const FUNCS = [() => generateNo(0, 9), () => generateAlphabet(true), () => generateAlphabet(false), generateSpecialChar];
+
         const contentEle = document.getElementById("content");
-        const passLen = 10
-        contentEle.innerText = "Random generated password of length " + passLen + " is: " + getPassword(passLen);
+        contentEle.innerText = "Random generated password of length " + PASS_LENGTH + " is: " + getPassword(PASS_LENGTH);
 
-        function getPassword(length) {
-            let password = [];
-            /* 
-                In a password
-                1. at least 1 number
-                2. at least 1 special char
-                3. at least 1 Uppercase alphabet
-                4. at least 1 Lowercase alphabet
-            
-                is mandatory
-            */
-            const randomNumber = getRandomNumber();
-            const randomSpecialChar = getRandomSpecialChar();
-            const randomUpperCaseAlpha = getRandomUppercaseAlphabet();
-            const randomLowerCaseAlpha = getRandomLowerrcaseAlphabet();
-            password.push(randomNumber);
-            password.push(randomSpecialChar);
-            password.push(randomUpperCaseAlpha);
-            password.push(randomLowerCaseAlpha);
-            /* --- */
+        function getPassword(passLength) {
+            const pass = [generateNo(0, 9), generateAlphabet(true), generateAlphabet(false), generateSpecialChar()];
 
-
-            /* 
-                while password length is less than desired length (passLen) 
-                we will keep pushing anything from them(number, special character, uppercase apphabet, lowercase alphabet) randomly
-            
-                charTypes =>  1: randomNumber, 2: randomSpecialChar, 3: randomUpperCaseAlpha, 4: randomLowerCaseAlpha
-            */
-            const randomCharTypeStart = 1, randromCharTypeEnd = 4
-            while (password.length < length) {
-                const randomCharType = Math.floor(Math.random() * (randromCharTypeEnd - randomCharTypeStart + 1)) + randomCharTypeStart;
-                switch (randomCharType) {
-                    case 1:
-                        password.push(getRandomNumber());
-                        break;
-                    case 2:
-                        password.push(getRandomSpecialChar());
-                        break;
-                    case 3:
-                        password.push(getRandomUppercaseAlphabet());
-                        break;
-                    case 4:
-                        password.push(getRandomLowerrcaseAlphabet());
-                        break;
-                }
+            const rqdLen = passLength - pass.length;
+            for (let i = 0; i < rqdLen; i++) {
+                const random = generateNo(0, FUNCS.length - 1);
+                const func = FUNCS[random];
+                pass.push(func())
             }
 
-            shuffleArray(password); //shuffling password characters
-
-            return password.join("");
+            shuffleArray(pass);
+            return pass.join("");
         }
 
-
-        // utils
-        function getRandomNumber() {
-            const start = 0, end = 9;
-
-            return Math.floor(Math.random() * (end - start + 1)) + start;
+        function generateNo(start, end) {
+            return Math.floor(Math.random() * (end - start + 1) + start);
         }
 
-        function getRandomSpecialChar() {
-            const specialChars = ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')', ',', '.', '/', '>', '<', '?', '~', ';', ':', '[', ']', '{', '}'];
-            const start = 0, end = specialChars.length - 1;
-            const randIdx = Math.floor(Math.random() * (end - start + 1)) + start;
-
-            return specialChars[randIdx];
+        function generateAlphabet(isUpper) {
+            /*
+                ASCII
+                upper case: 65 - 90
+                lower case: 97 - 122
+            */
+            const asciiCode = isUpper ? generateNo(65, 90) : generateNo(97, 122);
+            return String.fromCharCode(asciiCode);
         }
 
-        function getRandomUppercaseAlphabet() {
-            const start = 65, end = 90; // ascii code of A: 65, Z: 90
-            const randAscii = Math.floor(Math.random() * (end - start + 1)) + start;
+        function generateSpecialChar() {
+            const specialChars = "!@#$%^&*()_+~`|}{[]:;?><,./-=";
+            const idx = generateNo(0, specialChars.length - 1);
 
-            return String.fromCharCode(randAscii); // String.fromCharCode is used to get the character from its ascii code
-        }
-
-        function getRandomLowerrcaseAlphabet() {
-            const start = 97, end = 122; // ascii code of a: 97, z: 122
-            const randAscii = Math.floor(Math.random() * (end - start + 1)) + start;
-
-            return String.fromCharCode(randAscii); // String.fromCharCode is used to get the character from its ascii code
+            return specialChars[idx];
         }
 
         function shuffleArray(arr) {
-            for (let i = arr.length - 1; i > 0; i--) {
-                const randIdx = Math.floor(Math.random() * (i - 0 + 1)) + 0;
+            for (let i = 0; i < arr.length - 1; i++) {
+                const rand = generateNo(i, arr.length - 1);
 
-                const temp = arr[randIdx];
-                arr[randIdx] = arr[i];
-                arr[i] = temp;
-            } // swaps the randomly picked element with the current one, then picks the next random element from the remainder
+                let temp = arr[i];
+                arr[i] = arr[rand];
+                arr[rand] = temp;
+            }
         }
     </script>
 </body>
