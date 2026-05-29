@@ -9,37 +9,55 @@
 
     <style>
         body {
-            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 0;
         }
 
-        #form {
-            text-align: center;
-            margin: 10px;
-        }
-
-        #stages {
-            overflow-x: auto;
+        .inputWrapper {
+            padding: 50px;
             width: 100%;
             display: flex;
             align-items: center;
+            box-sizing: border-box;
+            justify-content: center;
         }
 
-        .stage {
-            min-width: 500px;
-            height: 80vh;
-            margin: 0px 10px;
-            background-color: white;
-            text-align: center;
+        .inputWrapper input {
+            width: 200px;
+            height: 35px;
         }
 
-        .stage h3 {
-            margin: 20px 0px;
+        .content {
+            padding: 100px;
+            display: flex;
+            gap: 50px;
+            width: 100%;
+            box-sizing: border-box;
+            overflow-x: auto;
         }
 
-        .task {
+        .block {
             padding: 10px;
-            background-color: #f1f1f1;
-            margin: 5px 5px;
+            background-color: antiquewhite;
+            width: 600px;
+            flex-shrink: 0;
+            box-sizing: border-box;
+        }
+
+        .cards {
+            padding: 0px;
+            margin: 0px;
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .card {
+            background-color: azure;
+            padding: 10px;
+            box-sizing: border-box;
+            width: 100%;
             cursor: grab;
         }
     </style>
@@ -47,119 +65,109 @@
 
 <body>
     <div id="content">
-        <form id="form">
-            <h2>Tasks</h2>
-            <input type="text" name="todo" autofocus />
-            <button>add</button>
-        </form>
-
-        <div id="stages"></div>
+        <section class="inputWrapper">
+            <input id="input" type="text" />
+        </section>
+        <section class="content" id="content"></section>
     </div>
 
     <script type="text/javascript">
+        const TO_DO = "toDo", IN_PROGRESS = "inProgress", DEV_DONE = 'devDone';
         let tasks = {
-            "toDo": ["eat pizza", "go market", "make video", "do exercise", "drink water"],
-            "inProgress": [],
-            "devDone": [],
-            "inQa": [],
-            "done": [],
-        };
-        const stages = Object.keys(tasks);
-
-        const formEle = document.getElementById("form");
-        formEle.addEventListener("submit", handleAddTask);
-
-        const stagesEle = document.getElementById("stages");
-        stagesEle.addEventListener("drag", handleDrag);
-        stagesEle.addEventListener("dragend", handleDragEnd);
-        stagesEle.addEventListener("dragover", handleDragOver);
-        stagesEle.addEventListener('drop', handleDrop);
-        // here we attached event listeners to the nearest static parent element of task and stage
-        // because element.addEventListener("event", handleChange); does not work for dynamically created elements 
-
-
-        renderStages();
-        function renderStages() {
-            const tempEle = document.createDocumentFragment();
-            stages.forEach(stage => {
-                const stageEle = document.createElement("div");
-                stageEle.classList.add("stage");
-                stageEle.dataset.stage = stage;
-
-                const h3Ele = document.createElement("h3");
-                h3Ele.innerText = stage;
-                stageEle.append(h3Ele);
-
-                stageEle.append(renderTasksOfASTage(stage, tasks[stage]));
-
-                tempEle.append(stageEle);
-            });
-
-            stagesEle.replaceChildren(tempEle);
+            [TO_DO]: ["eat pizza", "make video", "do exercise", "drink water"],
+            [IN_PROGRESS]: ["coding"],
+            [DEV_DONE]: ["visit market"]
         }
 
-        function renderTasksOfASTage(stage, tasks) {
-            const tempEle = document.createDocumentFragment();
-            tasks.forEach((task, idx) => {
-                const taskEle = document.createElement("div");
-                taskEle.dataset.taskIdx = idx;
-                taskEle.dataset.stage = stage;
-                taskEle.draggable = true;
-                taskEle.classList.add("task");
-                taskEle.innerText = task;
+        const inputEle = document.getElementById("input");
+        inputEle.addEventListener("keyup", handleInputChange);
+        function handleInputChange(e) {
+            const val = e.target.value;
 
-                tempEle.append(taskEle);
-            });
-
-            return tempEle;
-        }
-
-        function handleAddTask(e) {
-            e.preventDefault();
-
-            const val = e?.target?.todo?.value;
-            if (val) {
-                tasks["toDo"].push(val);
-                renderStages();
-
-                e.target.todo.value = "";
+            if (val && e.key === "Enter") {
+                tasks[TO_DO].push(val);
+                render();
             }
         }
 
-        let dragItem = null;
-        function handleDrag(e) {
-            dragItem = e.target; // selecting the picked element
+        let draggingEle, dropTo, dragFrom;
 
-            e.target.style.opacity = 0; // hiding that element (task)
+        const contentEle = document.getElementById("content");
+        contentEle.addEventListener("dragstart", handleDragStart);
+        function handleDragStart(e) {
+            const { type, id } = e.target.dataset;
+            if (type && id) {
+                dragFrom = type;
+                draggingEle = e.target;
+                draggingEle.style.opacity = 0.6;
+            }
         }
 
-        function handleDragEnd(e) {
-            dragItem = null;
-
-            e.target.style.opacity = 1; // showing that element (task)
-        }
-
+        contentEle.addEventListener("dragover", handleDragOver);
         function handleDragOver(e) {
-            e.preventDefault(); // this is very important otherwise on drop (handleDrop) will not be triggered
+            e.preventDefault(); // This is essential to enable dropping
+
+            const { type } = e.target.dataset;
+            dropTo = type;
         }
 
+        contentEle.addEventListener("drop", handleDrop);
         function handleDrop(e) {
-            if (dragItem) {
-                let { stage: prevStage, taskIdx: prevIdx } = dragItem?.dataset || {};
-                prevIdx = Number(prevIdx);
-                const newStage = e.target?.dataset?.stage, taskText = dragItem.innerText;
+            e.preventDefault();
+            if (dragFrom === dropTo) return cleanUp();
 
-                if (newStage === prevStage) return;
+            if (draggingEle && Object.keys(tasks).includes(dropTo)) {
+                const { type, id } = draggingEle.dataset;
 
-                if (prevStage && newStage && prevIdx >= 0) {
-                    tasks[newStage].push(taskText); // adding the picked/dragged task in the new stage
+                tasks = Object.keys(tasks).reduce((acc, blockKey) => {
+                    if (blockKey === type) return { ...acc, [blockKey]: tasks[blockKey].filter((_, idx) => idx !== Number(id)) }
+                    else if (blockKey === dropTo) return { ...acc, [blockKey]: [...tasks[blockKey], tasks[type][id]] }
+                    else return { ...acc, [blockKey]: tasks[blockKey] };
+                }, {});
 
-                    const prevStageTasks = tasks[prevStage];
-                    tasks[prevStage] = [...(prevStageTasks.slice(0, prevIdx)), ...(prevStageTasks.slice(prevIdx + 1))]; // remvoing the picked/dragged task from the prev/old stage
-
-                    renderStages();
-                }
+                render();
             }
+
+            cleanUp();
+        }
+
+        function cleanUp() {
+            draggingEle = null;
+            dragFrom = null;
+            dropTo = null;
+        }
+
+        render();
+        function render() {
+            const frag = document.createDocumentFragment();
+
+            Object.keys(tasks).forEach(blockKey => {
+                const blockEle = document.createElement("section");
+                blockEle.classList.add("block");
+                blockEle.dataset.type = blockKey;
+
+                const titleEle = document.createElement("h2");
+                titleEle.innerText = blockKey;
+                blockEle.appendChild(titleEle);
+
+                const cardsEle = document.createElement("ul");
+                cardsEle.classList.add("cards");
+                tasks[blockKey].forEach((task, taskId) => {
+                    const taskEle = document.createElement("li");
+                    taskEle.classList.add("card");
+                    taskEle.innerText = task;
+                    taskEle.dataset.type = blockKey;
+                    taskEle.dataset.id = taskId;
+                    taskEle.draggable = "true";
+
+                    cardsEle.appendChild(taskEle);
+                });
+                blockEle.appendChild(cardsEle);
+
+                frag.appendChild(blockEle);
+            });
+
+            contentEle.replaceChildren(frag);
         }
     </script>
 </body>
