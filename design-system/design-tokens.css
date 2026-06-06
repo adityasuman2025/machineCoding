@@ -3,7 +3,15 @@
     --color-off: antiquewhite;
     --color-red: red;
     --color-green: green;
+}
 
+[data-theme="dark"] {
+    /* PRIMITIVES TOKENS for dark theme */
+    --color-off: darkslategrey;
+}
+
+:root,
+[data-theme="dark"] {
     /* SEMANTIC TOKENS */
     --bg-color-main: var(--color-off);
 
