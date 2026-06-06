@@ -1,0 +1,12 @@
+:root {
+    /* PRIMITIVES TOKENS */
+    --color-off: antiquewhite;
+    --color-red: red;
+    --color-green: green;
+
+    /* SEMANTIC TOKENS */
+    --bg-color-main: var(--color-off);
+
+    /* COMPONENT TOKENS */
+    --body-bg-main: var(--bg-color-main);
+}
