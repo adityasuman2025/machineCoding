@@ -1,0 +1,261 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --bg-main: #09090b;
+    --bg-card: #18181b;
+    --bg-grid: #09090b;
+    --border-color: #27272a;
+    --border-focus: #10b981;
+    /* Emerald */
+    --text-main: #f4f4f5;
+    --text-muted: #a1a1aa;
+    --accent-color: #10b981;
+    --error-color: #ef4444;
+    --error-bg: #451a1a;
+    --header-bg: #18181b;
+    --cell-hover-bg: #27272a;
+    --cell-select-bg: #182e25;
+    --header-active-bg: #2d3748;
+    --header-active-text: #10b981;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Formula Bar Container */
+.formula-bar-container {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    gap: 12px;
+}
+
+.cell-coord-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 28px;
+    background-color: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent-color);
+}
+
+.formula-icon {
+    font-family: serif;
+    font-style: italic;
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--text-muted);
+    width: 20px;
+    text-align: center;
+}
+
+.formula-input-wrapper {
+    flex: 1;
+}
+
+.formula-input {
+    width: 100%;
+    height: 28px;
+    background-color: var(--bg-main);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 0 12px;
+    color: var(--text-main);
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.formula-input:focus {
+    border-color: var(--border-focus);
+}
+
+/* Reset / Secondary Buttons */
+.btn {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+.btn-secondary {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+}
+
+.btn-secondary:hover {
+    background-color: var(--cell-hover-bg);
+}
+
+.btn-danger {
+    background-color: var(--error-color);
+}
+
+/* Main Workspace */
+.workspace-container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* Grid Container */
+.grid-container {
+    flex: 1;
+    overflow: auto;
+    background-color: var(--bg-grid);
+}
+
+/* Spreadsheet Grid Table */
+.spreadsheet-grid {
+    border-collapse: collapse;
+    table-layout: fixed;
+    user-select: none;
+}
+
+/* Column and Row Headers */
+.grid-header {
+    background-color: var(--header-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    height: 25px;
+    width: 90px;
+}
+
+.grid-header.row-header {
+    position: sticky;
+    left: 0;
+    z-index: 6;
+    width: 45px;
+}
+
+.grid-header.corner-header {
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 7;
+    width: 45px;
+    background-color: var(--header-bg);
+}
+
+/* Active headers */
+.grid-header.col-active {
+    background-color: var(--header-active-bg);
+    color: var(--header-active-text);
+    border-bottom: 2px solid var(--accent-color);
+}
+
+.grid-header.row-active {
+    background-color: var(--header-active-bg);
+    color: var(--header-active-text);
+    border-right: 2px solid var(--accent-color);
+}
+
+/* Cells */
+.grid-cell {
+    border: 1px solid var(--border-color);
+    padding: 4px 6px;
+    font-size: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    outline: none;
+    cursor: cell;
+    position: relative;
+    background-color: var(--bg-grid);
+    height: 25px;
+    width: 90px;
+}
+
+.grid-cell:hover {
+    background-color: var(--cell-hover-bg);
+}
+
+.grid-cell.cell-error {
+    color: var(--error-color);
+    background-color: var(--error-bg);
+}
+
+.grid-cell.selected {
+    outline: 2px solid var(--border-focus);
+    outline-offset: -2px;
+    background-color: var(--cell-select-bg);
+    z-index: 2;
+}
+
+/* Inline Editor Overlay */
+.cell-editor {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--accent-color);
+    background-color: var(--bg-grid);
+    color: var(--text-main);
+    padding: 4px 6px;
+    font-family: inherit;
+    font-size: 13px;
+    resize: none;
+    outline: none;
+    z-index: 4;
+}
+
+/* Scrollbars */
+.grid-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.grid-container::-webkit-scrollbar-track {
+    background: var(--bg-main);
+}
+
+.grid-container::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+.grid-container::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-color);
+}

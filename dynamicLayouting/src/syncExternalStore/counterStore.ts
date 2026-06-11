@@ -2,7 +2,7 @@ let state = {
     counter: 0
 }
 
-const listeners = new Set([]);
+const listeners = new Set<() => void>();
 
 const counterStore = {
     getState: function () {
@@ -13,7 +13,7 @@ const counterStore = {
 
         listeners.forEach(cb => cb());
     },
-    subscribe: function (listener) {
+    subscribe: function (listener: () => void) {
         listeners.add(listener);
 
         return () => listeners.delete(listener);
