@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Docs</title>
+    <link rel="stylesheet" href="/googleDocs/style.css">
+</head>
+
+<body>
+    <!-- Full-screen scrollable viewport -->
+    <main id="scroll-viewport">
+        <!-- InputInterceptor: hidden <textarea> that captures all keyboard / IME input.
+             The canvas is opaque to the browser, so this proxy element holds real focus. -->
+        <textarea id="input-interceptor" aria-label="Document editor" autocomplete="off" autocorrect="off"
+            autocapitalize="off" spellcheck="false" tabindex="0"></textarea>
+
+        <!-- canvas-container height is set by JS to match document length (drives the scrollbar).
+             The <canvas> itself is sticky so it always fills the viewport. -->
+        <div id="canvas-container">
+            <canvas id="doc-canvas" aria-hidden="true"></canvas>
+        </div>
+    </main>
+
+    <script src="/googleDocs/main.js"></script>
+</body>
+
+</html>

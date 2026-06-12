@@ -1,0 +1,97 @@
+/* ============================================================================
+   style.css  —  Canvas Docs
+   Minimal styles: just the scroll-viewport shell, the sticky canvas,
+   and the off-screen input interceptor.
+   ============================================================================ */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    height: 100%;
+    overflow: hidden;
+    background: #f0f2f5;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* sr-only: visually hidden but accessible to screen readers */
+.sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+}
+
+/* ── Scroll Viewport ─────────────────────────────────────────────────────── */
+/* Full-screen scrollable container. Its scroll position is read by main.js
+   and forwarded to the worker so only visible lines are rendered. */
+
+#scroll-viewport {
+    width: 100%;
+    height: 100vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    background: #f0f2f5;
+
+    /* Slim, unobtrusive scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: #c8cace #f0f2f5;
+}
+#scroll-viewport::-webkit-scrollbar        { width: 10px; }
+#scroll-viewport::-webkit-scrollbar-track  { background: #f0f2f5; }
+#scroll-viewport::-webkit-scrollbar-thumb  {
+    background: #c8cace;
+    border-radius: 5px;
+    border: 2px solid #f0f2f5;
+}
+
+/* ── Input Interceptor ───────────────────────────────────────────────────── */
+/* The canvas is opaque to the DOM, so a hidden <textarea> holds real focus.
+   Every keystroke fires here; main.js reads the value and forwards it to the
+   worker as a USER_INPUT message. */
+
+#input-interceptor {
+    position: fixed;
+    top: -9999px;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    resize: none;
+    overflow: hidden;
+    border: none;
+    outline: none;
+    padding: 0;
+    white-space: pre;
+    z-index: -1;
+}
+
+/* ── Canvas Container ────────────────────────────────────────────────────── */
+/* canvas-container height is set by JS to match the total document height
+   (PAGE_H * pages + PAGE_GAP * gaps). This gives the native scrollbar the
+   correct thumb size without us having to render off-screen content. */
+
+#canvas-container {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+}
+
+/* The canvas is sticky so it always fills the viewport while the user scrolls.
+   draw() subtracts scrollport.scrollTop from all Y coords to compensate. */
+#doc-canvas {
+    display: block;
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    cursor: text;
+}
