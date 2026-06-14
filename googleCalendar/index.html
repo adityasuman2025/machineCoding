@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antigravity Premium Calendar</title>
+    <meta name="description"
+        content="A premium, highly-responsive calendar application featuring absolute visual coordinate positioning for overlapping events, multi-day event bars, and an interactive focus-trapped creation modal.">
+
+    <!-- External Stylesheet link -->
+    <link rel="stylesheet" href="/googleCalendar/style.css">
+</head>
+
+<body>
+    <!-- Main Application Shell -->
+    <div class="calendar-app">
+        <!-- Header Controls -->
+        <header class="calendar-header">
+            <div class="header-left">
+                <span class="logo-icon">📅</span>
+                <h1 class="header-title" id="currentRangeText">June 2026</h1>
+            </div>
+
+            <div class="header-center">
+                <!-- Navigation -->
+                <button class="btn" id="btnPrev" aria-label="Previous Period">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <path d="M15 18l-6-6 6-6"></path>
+                    </svg>
+                </button>
+                <button class="btn btn-today" id="btnToday">Today</button>
+                <button class="btn" id="btnNext" aria-label="Next Period">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <path d="M9 18l6-6-6-6"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="header-right">
+                <!-- Zoom timeline layout size -->
+                <div class="zoom-control">
+                    <span class="zoom-icon">🔍</span>
+                    <input type="range" id="zoomSlider" min="40" max="120" value="60" aria-label="Zoom timeline height">
+                </div>
+
+                <!-- View selector buttons -->
+                <div class="segmented-control" role="tablist">
+                    <button class="segment" id="segDay" role="tab" aria-selected="false" data-view="day">Day</button>
+                    <button class="segment" id="segWeek" role="tab" aria-selected="false" data-view="week">Week</button>
+                    <button class="segment active" id="segMonth" role="tab" aria-selected="true"
+                        data-view="month">Month</button>
+                </div>
+
+                <!-- Quick add CTA -->
+                <button class="btn btn-accent" id="btnNewEvent">+ Event</button>
+            </div>
+        </header>
+
+        <!-- View workspace where active views are programmatically compiled -->
+        <main class="view-workspace" id="viewWorkspace">
+            <!-- programmatically injected from app.js -->
+        </main>
+    </div>
+
+    <!-- HTML5 Modal Dialog for CRUD Operations -->
+    <dialog id="eventModal">
+        <div class="modal-card">
+            <header class="modal-header">
+                <h2 id="modalTitle">New Event</h2>
+                <button class="btn-close" id="btnModalClose" aria-label="Close dialog">×</button>
+            </header>
+
+            <form id="eventForm" method="dialog">
+                <input type="hidden" id="eventId">
+
+                <div class="form-group">
+                    <label for="eventTitle">Title</label>
+                    <input type="text" id="eventTitle" placeholder="Add title" required autocomplete="off">
+                </div>
+
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label for="eventStart">Start Date & Time</label>
+                        <input type="datetime-local" id="eventStart" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventEnd">End Date & Time</label>
+                        <input type="datetime-local" id="eventEnd" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Color Tag</label>
+                    <div class="color-picker-grid">
+                        <label class="color-option color-blue" title="Blue Accent">
+                            <input type="radio" name="eventColor" value="blue" checked>
+                            <span class="color-dot"></span>
+                        </label>
+                        <label class="color-option color-purple" title="Purple Accent">
+                            <input type="radio" name="eventColor" value="purple">
+                            <span class="color-dot"></span>
+                        </label>
+                        <label class="color-option color-green" title="Green Accent">
+                            <input type="radio" name="eventColor" value="green">
+                            <span class="color-dot"></span>
+                        </label>
+                        <label class="color-option color-orange" title="Orange Accent">
+                            <input type="radio" name="eventColor" value="orange">
+                            <span class="color-dot"></span>
+                        </label>
+                        <label class="color-option color-pink" title="Pink Accent">
+                            <input type="radio" name="eventColor" value="pink">
+                            <span class="color-dot"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="eventDescription">Description</label>
+                    <textarea id="eventDescription" placeholder="Add description..." rows="3"></textarea>
+                </div>
+
+                <footer class="modal-footer">
+                    <!-- delete button is hidden during event creation -->
+                    <button type="button" class="btn btn-danger hidden" id="btnModalDelete">Delete</button>
+                    <div class="modal-footer-right">
+                        <button type="button" class="btn btn-secondary" id="btnModalCancel">Cancel</button>
+                        <button type="submit" class="btn btn-accent" id="btnModalSave">Save</button>
+                    </div>
+                </footer>
+            </form>
+        </div>
+    </dialog>
+
+    <!-- Main Logic Script reference (executed after DOM parsing) -->
+    <script src="/googleCalendar/app.js" defer></script>
+</body>
+
+</html>
