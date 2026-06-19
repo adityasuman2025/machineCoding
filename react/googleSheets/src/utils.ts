@@ -1,10 +1,36 @@
-import { type SheetData } from "./constants";
+import { type SheetData, type CellData } from "./constants";
 
-export function setObjVal(obj, rowIdx, colIdx, data) {
+export function setObjVal(obj: SheetData, rowIdx: number, colIdx: number, data: Partial<CellData>) {
     if (!obj.hasOwnProperty(rowIdx)) obj[rowIdx] = {}
-    if (!obj[rowIdx].hasOwnProperty(colIdx)) obj[rowIdx][colIdx] = {}
+    if (!obj[rowIdx].hasOwnProperty(colIdx)) obj[rowIdx][colIdx] = { raw: "", computed: "", error: false };
 
     obj[rowIdx][colIdx] = { ...obj[rowIdx][colIdx], ...data };
+}
+
+/**
+ * High-level evaluator for a cell's raw content.
+ * Resolves simple values immediately and processes formula queries via evaluateFormula.
+ */
+export function computeCell(rawExpression: string, sheetData: SheetData): { computed: string; error: boolean } {
+    if (!rawExpression.startsWith("=")) return { computed: rawExpression, error: false };
+
+    try {
+        const computedValue = evaluateFormula(rawExpression, sheetData);
+        return { computed: computedValue, error: computedValue === "#ERR!" || computedValue === "#REF!" };
+    } catch {
+        return { computed: "#ERR!", error: true };
+    }
+}
+
+/**
+ * Converts a cell reference string (e.g., "B2") to an internal coordinate key string matching the diagram's "rowIdx_colIdx" format.
+ */
+export function convertRefToCoordinateKey(cellReference: string): string {
+    const columnLetters = cellReference.match(/[A-Z]+/)?.[0] || "";
+    const rowNumber = cellReference.match(/[0-9]+/)?.[0] || "";
+    const columnIndex = columnLetters.charCodeAt(0) - 65;
+    const rowIndex = parseInt(rowNumber, 10) - 1;
+    return `${rowIndex}_${columnIndex}`;
 }
 
 /**
@@ -50,21 +76,6 @@ export function evaluateFormula(rawExpression: string, sheetData: SheetData): st
 }
 
 /**
- * High-level evaluator for a cell's raw content.
- * Resolves simple values immediately and processes formula queries via evaluateFormula.
- */
-export function computeCell(rawExpression: string, sheetData: SheetData): { computed: string; error: boolean } {
-    if (!rawExpression.startsWith("=")) return { computed: rawExpression, error: false };
-
-    try {
-        const computedValue = evaluateFormula(rawExpression, sheetData);
-        return { computed: computedValue, error: computedValue === "#ERR!" || computedValue === "#REF!" };
-    } catch {
-        return { computed: "#ERR!", error: true };
-    }
-}
-
-/**
  * Extracts unique cell reference names (e.g., "A1", "B2") from a formula string.
  * Named parseFormula to match the component diagram.
  */
@@ -76,17 +87,6 @@ export function parseFormula(rawExpression: string): string[] {
 }
 
 /**
- * Converts a cell reference string (e.g., "B2") to an internal coordinate key string matching the diagram's "rowIdx_colIdx" format.
- */
-export function convertRefToCoordinateKey(cellReference: string): string {
-    const columnLetters = cellReference.match(/[A-Z]+/)?.[0] || "";
-    const rowNumber = cellReference.match(/[0-9]+/)?.[0] || "";
-    const columnIndex = columnLetters.charCodeAt(0) - 65;
-    const rowIndex = parseInt(rowNumber, 10) - 1;
-    return `${rowIndex}_${columnIndex}`;
-}
-
-/**
  * Directed Acyclic Graph (DAG) manager.
  * Named SheetGraph to match the Data Model diagram.
  */
@@ -95,7 +95,7 @@ export class SheetGraph {
     // E.g., if B1 depends on A1, this contains: "0_0" -> Set(["0_1"])
     // USE: Used to get topological order for forward propagation when a dependency cell changes.
     // PERFORMANCE: Allows finding dependent cells in O(1) time without scanning all grid formulas.
-    private dependencyToDependentsMap = new Map<string, Set<string>>();
+    private dependencyToDependentsMap = new Map<string, Set<string>>(); // adjacency list
 
     // Maps a cell key to the set of cells it depends on (upward/backward edges).
     // E.g., if B1 depends on A1, this contains: "0_1" -> Set(["0_0"])
@@ -108,22 +108,18 @@ export class SheetGraph {
      * Clears previous dependencies of the node and applies new ones.
      */
     updateDependencies(cellKey: string, dependencyKeys: string[]) {
-        const previousDependencyKeys = this.cellToDependenciesMap.get(cellKey);
-        if (previousDependencyKeys) {
-            for (const dependencyKey of previousDependencyKeys) {
-                this.dependencyToDependentsMap.get(dependencyKey)?.delete(cellKey);
-            }
-        }
+        const previousDependencyKeys = [...(this.cellToDependenciesMap.get(cellKey) || [])];
+        previousDependencyKeys.forEach(dependencyKey => {
+            this.dependencyToDependentsMap.get(dependencyKey)?.delete(cellKey);
+        });
 
-        const newDependencyKeysSet = new Set(dependencyKeys);
-        this.cellToDependenciesMap.set(cellKey, newDependencyKeysSet);
+        this.cellToDependenciesMap.set(cellKey, new Set(dependencyKeys));
 
-        for (const dependencyKey of dependencyKeys) {
-            if (!this.dependencyToDependentsMap.has(dependencyKey)) {
-                this.dependencyToDependentsMap.set(dependencyKey, new Set());
-            }
-            this.dependencyToDependentsMap.get(dependencyKey)!.add(cellKey);
-        }
+        dependencyKeys.forEach(dependencyKey => {
+            if (!this.dependencyToDependentsMap.has(dependencyKey)) this.dependencyToDependentsMap.set(dependencyKey, new Set());
+
+            this.dependencyToDependentsMap.get(dependencyKey)?.add(cellKey);
+        });
     }
 
     /**
@@ -132,22 +128,31 @@ export class SheetGraph {
     checkCycle(cellKey: string, dependencyKeys: string[]): boolean {
         const visited = new Set<string>();
 
-        const dfs = (currentCellKey: string): boolean => {
-            if (currentCellKey === cellKey) return true; // Reached target node -> Cycle detected!
-            if (visited.has(currentCellKey)) return false;
-            visited.add(currentCellKey);
+        const dfs = (curr: string): boolean => {
+            visited.add(curr);
 
-            const currentDependencyKeys = this.cellToDependenciesMap.get(currentCellKey);
-            if (currentDependencyKeys) {
-                for (const dependencyKey of currentDependencyKeys) {
-                    if (dfs(dependencyKey)) return true;
+            const depdList: string[] = Array.from(this.cellToDependenciesMap.get(curr) || new Set());
+            for (let i = 0; i < depdList.length; i++) {
+                const node = depdList[i];
+
+                if (node === cellKey) return true; // Reached target cell -> Cycle detected!
+
+                if (!visited.has(node)) {
+                    if (dfs(node)) return true;
                 }
             }
+
             return false;
         };
 
-        for (const dependencyKey of dependencyKeys) {
-            if (dfs(dependencyKey)) return true;
+        for (let i = 0; i < dependencyKeys.length; i++) {
+            const node = dependencyKeys[i];
+
+            if (node === cellKey) return true; // Self-reference cycle (e.g. A1 = A1)
+
+            if (!visited.has(node)) {
+                if (dfs(node)) return true;
+            }
         }
 
         return false;
@@ -157,23 +162,21 @@ export class SheetGraph {
      * Generates a topological sort list of cell updates starting from a seed node.
      */
     getTopologicalUpdateOrder(startCellKey: string): string[] {
-        const topologicalOrder: string[] = [];
         const visited = new Set<string>();
+        const stack: string[] = [];
 
-        const dfs = (currentCellKey: string) => {
-            if (visited.has(currentCellKey)) return;
-            visited.add(currentCellKey);
+        const dfs = (curr: string) => {
+            visited.add(curr);
 
-            const dependentCellKeys = this.dependencyToDependentsMap.get(currentCellKey);
-            if (dependentCellKeys) {
-                for (const dependentCellKey of dependentCellKeys) {
-                    dfs(dependentCellKey);
-                }
-            }
-            topologicalOrder.push(currentCellKey); // Record in post-order
+            const depdList = this.dependencyToDependentsMap.get(curr) || new Set();
+            depdList.forEach(node => {
+                if (!visited.has(node)) dfs(node);
+            });
+
+            stack.push(curr);
         };
-
         dfs(startCellKey);
-        return topologicalOrder.reverse(); // Reverse post-order to get topological sorting
+
+        return stack.reverse();
     }
 }

@@ -1,6 +1,6 @@
 import { setObjVal, computeCell, parseFormula, convertRefToCoordinateKey, SheetGraph } from "./utils";
 import { type SheetData, SHEET_ID } from "./constants";
-import { updateSheetData } from "./apis";
+import { updateSheetDataAPI } from "./apis";
 
 const state: { sheetData: SheetData } = { sheetData: {} };
 
@@ -9,13 +9,13 @@ const sheetGraph = new SheetGraph();
 
 const listeners = new Set<() => void>();
 export const sheetData = {
-    getComputed(rowIdx, colIdx) {
+    getComputed(rowIdx: number, colIdx: number) {
         return state.sheetData?.[rowIdx]?.[colIdx]?.computed || "";
     },
-    getRaw(rowIdx, colIdx) {
+    getRaw(rowIdx: number, colIdx: number) {
         return state.sheetData?.[rowIdx]?.[colIdx]?.raw || "";
     },
-    set: function (rowIdx, colIdx, rawVal) {
+    set: function (rowIdx: number, colIdx: number, rawVal: string) {
         /**
          * Main write method called when a cell is updated.
          * FLOW:
@@ -38,11 +38,9 @@ export const sheetData = {
         // Step 2: Cycle Detection
         // Prevent circular loops (e.g., A1 = B1 and B1 = A1)
         if (sheetGraph.checkCycle(cellKey, dependencyKeys)) {
-            const cellVal = { raw: rawVal, computed: "#REF!", error: true };
-            setObjVal(state.sheetData, rowIdx, colIdx, cellVal);
+            setObjVal(state.sheetData, rowIdx, colIdx, { raw: rawVal, computed: "#REF!", error: true });
+            updateSheetDataAPI(SHEET_ID, rowIdx, colIdx, state.sheetData[rowIdx][colIdx]); // Persist the updated cell value to backend API / localstorage
 
-            // Persist the updated cell value to backend API / localstorage
-            updateSheetData(SHEET_ID, rowIdx, colIdx, cellVal);
             listeners.forEach(cb => cb());
             return;
         }
@@ -65,11 +63,8 @@ export const sheetData = {
             const { computed, error } = computeCell(cellRaw, state.sheetData);
 
             // Safely write the computed and error states using setObjVal
-            const cellVal = { computed, error };
-            setObjVal(state.sheetData, targetRowIdx, targetColIdx, cellVal);
-
-            // Persist the updated cell value to backend API / localstorage
-            updateSheetData(SHEET_ID, targetRowIdx, targetColIdx, state.sheetData[targetRowIdx][targetColIdx]);
+            setObjVal(state.sheetData, targetRowIdx, targetColIdx, { computed, error });
+            updateSheetDataAPI(SHEET_ID, targetRowIdx, targetColIdx, state.sheetData[targetRowIdx][targetColIdx]); // Persist the updated cell value to backend API / localstorage
         }
 
         listeners.forEach(cb => cb());
@@ -97,7 +92,7 @@ export const sheetData = {
 
         listeners.forEach(cb => cb());
     },
-    subscribe: (cb) => {
+    subscribe: (cb: () => void) => {
         listeners.add(cb);
         return () => listeners.delete(cb);
     }

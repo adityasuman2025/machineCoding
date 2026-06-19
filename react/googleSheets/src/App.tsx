@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import Cell from "./Cell";
 import { sheetData } from "./sheetStore";;
-import { getSheetData } from "./apis";
+import { getSheetDataAPI } from "./apis";
 import { ROWS, COLS, SHEET_ID } from "./constants";
 
 export default function App() {
     useEffect(() => {
         (async () => {
-            const resp = await getSheetData(SHEET_ID);
+            const resp = await getSheetDataAPI(SHEET_ID);
             sheetData.setState(resp);
         })();
     }, []);
