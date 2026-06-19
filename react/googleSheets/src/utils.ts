@@ -91,34 +91,38 @@ export function convertRefToCoordinateKey(cellReference: string): string {
  * Named SheetGraph to match the Data Model diagram.
  */
 export class SheetGraph {
-    // Maps a dependency to the set of cells that depend on it (children / dependents)
-    // E.g., if B1 depends on A1, adjList contains: "0_0" -> Set(["0_1"])
-    private adjList = new Map<string, Set<string>>();
+    // Maps a dependency cell key to the set of cells that depend on it (downward/forward edges).
+    // E.g., if B1 depends on A1, this contains: "0_0" -> Set(["0_1"])
+    // USE: Used to get topological order for forward propagation when a dependency cell changes.
+    // PERFORMANCE: Allows finding dependent cells in O(1) time without scanning all grid formulas.
+    private dependencyToDependentsMap = new Map<string, Set<string>>();
 
-    // Maps a cell to the set of cells it depends on (parents / dependencies)
-    // E.g., if B1 depends on A1, dependencies contains: "0_1" -> Set(["0_0"])
-    private dependencies = new Map<string, Set<string>>();
+    // Maps a cell key to the set of cells it depends on (upward/backward edges).
+    // E.g., if B1 depends on A1, this contains: "0_1" -> Set(["0_0"])
+    // USE: Used for cycle detection DFS and to easily find and delete old dependencies when a formula changes.
+    // PERFORMANCE: Avoids searching all sets in the dependencyToDependentsMap, keeping edge cleanup O(1).
+    private cellToDependenciesMap = new Map<string, Set<string>>();
 
     /**
      * Updates dependency edges for a node.
      * Clears previous dependencies of the node and applies new ones.
      */
     updateDependencies(cellKey: string, dependencyKeys: string[]) {
-        const previousDependencyKeys = this.dependencies.get(cellKey);
+        const previousDependencyKeys = this.cellToDependenciesMap.get(cellKey);
         if (previousDependencyKeys) {
             for (const dependencyKey of previousDependencyKeys) {
-                this.adjList.get(dependencyKey)?.delete(cellKey);
+                this.dependencyToDependentsMap.get(dependencyKey)?.delete(cellKey);
             }
         }
 
         const newDependencyKeysSet = new Set(dependencyKeys);
-        this.dependencies.set(cellKey, newDependencyKeysSet);
+        this.cellToDependenciesMap.set(cellKey, newDependencyKeysSet);
 
         for (const dependencyKey of dependencyKeys) {
-            if (!this.adjList.has(dependencyKey)) {
-                this.adjList.set(dependencyKey, new Set());
+            if (!this.dependencyToDependentsMap.has(dependencyKey)) {
+                this.dependencyToDependentsMap.set(dependencyKey, new Set());
             }
-            this.adjList.get(dependencyKey)!.add(cellKey);
+            this.dependencyToDependentsMap.get(dependencyKey)!.add(cellKey);
         }
     }
 
@@ -133,7 +137,7 @@ export class SheetGraph {
             if (visited.has(currentCellKey)) return false;
             visited.add(currentCellKey);
 
-            const currentDependencyKeys = this.dependencies.get(currentCellKey);
+            const currentDependencyKeys = this.cellToDependenciesMap.get(currentCellKey);
             if (currentDependencyKeys) {
                 for (const dependencyKey of currentDependencyKeys) {
                     if (dfs(dependencyKey)) return true;
@@ -160,7 +164,7 @@ export class SheetGraph {
             if (visited.has(currentCellKey)) return;
             visited.add(currentCellKey);
 
-            const dependentCellKeys = this.adjList.get(currentCellKey);
+            const dependentCellKeys = this.dependencyToDependentsMap.get(currentCellKey);
             if (dependentCellKeys) {
                 for (const dependentCellKey of dependentCellKeys) {
                     dfs(dependentCellKey);

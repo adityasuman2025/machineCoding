@@ -54,7 +54,6 @@ export const sheetData = {
         // Step 4: Propagate changes in topological order
         // This guarantees that any cell depending on our updated cell is calculated ONLY after its dependencies have resolved
         const topologicalUpdateOrder = sheetGraph.getTopologicalUpdateOrder(cellKey);
-
         for (const cellCoordinateKey of topologicalUpdateOrder) {
             const [rowString, colString] = cellCoordinateKey.split("_");
             const targetRowIdx = parseInt(rowString, 10);
