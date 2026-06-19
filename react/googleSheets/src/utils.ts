@@ -1,22 +1,28 @@
+import { type SheetData } from "./constants";
+
+export function setObjVal(obj, rowIdx, colIdx, data) {
+    if (!obj.hasOwnProperty(rowIdx)) obj[rowIdx] = {}
+    if (!obj[rowIdx].hasOwnProperty(colIdx)) obj[rowIdx][colIdx] = {}
+
+    obj[rowIdx][colIdx] = { ...obj[rowIdx][colIdx], ...data };
+}
+
 /**
  * Parses and evaluates formula expressions (like "=A1+B2").
  * Supports direct reference copying and basic math calculations.
  */
-export function evaluateFormula(
-    rawExpression: string,
-    sheetData: { computed: string }[][]
-): string {
+export function evaluateFormula(rawExpression: string, sheetData: SheetData): string {
     if (!rawExpression.startsWith("=")) return rawExpression;
 
     const sanitizedFormula = rawExpression.slice(1).toUpperCase().replace(/\s+/g, "");
-    
+
     // If the formula is exactly a single cell reference (e.g., "=A1"), return its value directly
     if (/^[A-Z]+[0-9]+$/.test(sanitizedFormula)) {
         const columnLetters = sanitizedFormula.match(/[A-Z]+/)?.[0] || "";
         const rowNumber = sanitizedFormula.match(/[0-9]+/)?.[0] || "";
         const columnIndex = columnLetters.charCodeAt(0) - 65; // Convert letter (A-Z) to index (0-25)
         const rowIndex = parseInt(rowNumber, 10) - 1;   // Convert 1-based row string to 0-based index
-        
+
         const cellRawValue = sheetData[rowIndex]?.[columnIndex]?.computed || "";
         // Recursively evaluate if the referenced cell is also a formula
         return cellRawValue.startsWith("=") ? evaluateFormula(cellRawValue, sheetData) : cellRawValue;
@@ -26,10 +32,10 @@ export function evaluateFormula(
     const evaluatedExpression = sanitizedFormula.replace(/[A-Z]+[0-9]+/g, (cellReference) => {
         const columnLetters = cellReference.match(/[A-Z]+/)?.[0] || "";
         const rowNumber = cellReference.match(/[0-9]+/)?.[0] || "";
-        
+
         const columnIndex = columnLetters.charCodeAt(0) - 65; // Converts A -> 0, B -> 1
         const rowIndex = parseInt(rowNumber, 10) - 1;
-        
+
         const cellRawValue = sheetData[rowIndex]?.[columnIndex]?.computed || "";
         const cellComputedValue = cellRawValue.startsWith("=") ? evaluateFormula(cellRawValue, sheetData) : cellRawValue;
         return cellComputedValue || "0"; // Treat empty/non-existent cell references as 0 inside math equations
@@ -47,18 +53,12 @@ export function evaluateFormula(
  * High-level evaluator for a cell's raw content.
  * Resolves simple values immediately and processes formula queries via evaluateFormula.
  */
-export function computeCell(
-    rawExpression: string,
-    sheetData: { computed: string }[][]
-): { computed: string; error: boolean } {
+export function computeCell(rawExpression: string, sheetData: SheetData): { computed: string; error: boolean } {
     if (!rawExpression.startsWith("=")) return { computed: rawExpression, error: false };
 
     try {
         const computedValue = evaluateFormula(rawExpression, sheetData);
-        return {
-            computed: computedValue,
-            error: computedValue === "#ERR!" || computedValue === "#REF!"
-        };
+        return { computed: computedValue, error: computedValue === "#ERR!" || computedValue === "#REF!" };
     } catch {
         return { computed: "#ERR!", error: true };
     }

@@ -1,9 +1,17 @@
-import { memo, useCallback, useMemo, useSyncExternalStore } from "react";
+import { useEffect } from "react";
 import Cell from "./Cell";
-import { ROWS, COLS, sheetData } from "./sheetStore";;
-
+import { sheetData } from "./sheetStore";;
+import { getSheetData } from "./apis";
+import { ROWS, COLS, SHEET_ID } from "./constants";
 
 export default function App() {
+    useEffect(() => {
+        (async () => {
+            const resp = await getSheetData(SHEET_ID);
+            sheetData.setState(resp);
+        })();
+    }, []);
+
     return (
         <section className="grid">
             {

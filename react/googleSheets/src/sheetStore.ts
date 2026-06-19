@@ -1,18 +1,8 @@
-import { computeCell, parseFormula, convertRefToCoordinateKey, SheetGraph } from "./utils";
+import { setObjVal, computeCell, parseFormula, convertRefToCoordinateKey, SheetGraph } from "./utils";
+import { type SheetData, SHEET_ID } from "./constants";
+import { updateSheetData } from "./apis";
 
-export const ROWS_C: number = 2, COL_C: number = 2;
-export const ROWS = new Array(ROWS_C).fill(0);
-export const COLS = new Array(COL_C).fill(0);
-
-interface CellData {
-    raw: string;
-    computed: string;
-    error: boolean
-}
-const emptyCellData: CellData = { raw: "", computed: "", error: false };
-const state: { sheetData: CellData[][] } = {
-    sheetData: ROWS.map((_ => COLS.map(_ => ({ ...emptyCellData }))))
-};
+const state: { sheetData: SheetData } = { sheetData: {} };
 
 // Dependency graph tracking cell relationships to manage update paths and prevent circular references
 const sheetGraph = new SheetGraph();
@@ -48,26 +38,62 @@ export const sheetData = {
         // Step 2: Cycle Detection
         // Prevent circular loops (e.g., A1 = B1 and B1 = A1)
         if (sheetGraph.checkCycle(cellKey, dependencyKeys)) {
-            state.sheetData[rowIdx][colIdx] = { raw: rawVal, computed: "#REF!", error: true };
+            const cellVal = { raw: rawVal, computed: "#REF!", error: true };
+            setObjVal(state.sheetData, rowIdx, colIdx, cellVal);
+
+            // Persist the updated cell value to backend API / localstorage
+            updateSheetData(SHEET_ID, rowIdx, colIdx, cellVal);
             listeners.forEach(cb => cb());
             return;
         }
 
         // Step 3: Update DAG edges
         sheetGraph.updateDependencies(cellKey, dependencyKeys);
-        state.sheetData[rowIdx][colIdx].raw = rawVal;
+        setObjVal(state.sheetData, rowIdx, colIdx, { raw: rawVal, computed: "", error: false });
 
         // Step 4: Propagate changes in topological order
         // This guarantees that any cell depending on our updated cell is calculated ONLY after its dependencies have resolved
         const topologicalUpdateOrder = sheetGraph.getTopologicalUpdateOrder(cellKey);
+
         for (const cellCoordinateKey of topologicalUpdateOrder) {
             const [rowString, colString] = cellCoordinateKey.split("_");
             const targetRowIdx = parseInt(rowString, 10);
             const targetColIdx = parseInt(colString, 10);
-            const cell = state.sheetData[targetRowIdx][targetColIdx];
 
-            const { computed, error } = computeCell(cell.raw, state.sheetData);
-            state.sheetData[targetRowIdx][targetColIdx] = { ...cell, computed, error };
+            // Safely read the raw value (defaulting to empty string if cell is uninitialized)
+            const cellRaw = state.sheetData[targetRowIdx]?.[targetColIdx]?.raw || "";
+
+            const { computed, error } = computeCell(cellRaw, state.sheetData);
+
+            // Safely write the computed and error states using setObjVal
+            const cellVal = { computed, error };
+            setObjVal(state.sheetData, targetRowIdx, targetColIdx, cellVal);
+
+            // Persist the updated cell value to backend API / localstorage
+            updateSheetData(SHEET_ID, targetRowIdx, targetColIdx, state.sheetData[targetRowIdx][targetColIdx]);
+        }
+
+        listeners.forEach(cb => cb());
+    },
+    setState(sheetData: SheetData) {
+        state.sheetData = { ...sheetData };
+
+        // Reconstruct SheetGraph dependencies for all loaded cells
+        for (const rowIdxStr of Object.keys(sheetData)) {
+            const rowIdx = parseInt(rowIdxStr, 10);
+            const rowObj = sheetData[rowIdx];
+            if (!rowObj) continue;
+
+            for (const colIdxStr of Object.keys(rowObj)) {
+                const colIdx = parseInt(colIdxStr, 10);
+                const cell = rowObj[colIdx];
+                if (cell && cell.raw) {
+                    const cellKey = `${rowIdx}_${colIdx}`;
+                    const referencedCells = parseFormula(cell.raw);
+                    const dependencyKeys = referencedCells.map(convertRefToCoordinateKey);
+                    sheetGraph.updateDependencies(cellKey, dependencyKeys);
+                }
+            }
         }
 
         listeners.forEach(cb => cb());
