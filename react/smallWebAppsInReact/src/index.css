@@ -79,3 +79,43 @@ body {
     padding: 10px;
     cursor: pointer;
 }
+
+
+.carousel {
+    position: relative;
+    width: 600px;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+.images {
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+    transition-duration: 0.5s;
+    transition-timing-function: ease-in-out;
+}
+
+.left {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    background-color: red;
+    padding: 5px;
+    box-sizing: border-box;
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.right {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    right: 0;
+    background-color: red;
+    padding: 5px;
+    box-sizing: border-box;
+    border-radius: 50%;
+    z-index: 1;
+}

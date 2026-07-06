@@ -29,13 +29,17 @@
             border-radius: 15px;
         }
 
-        .slide {
+        .slider-track {
+            display: flex;
             width: 100%;
             height: 100%;
-            max-width: 100%;
-            max-height: 100%;
-            position: absolute;
-            transition-duration: 0.5s;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .slide {
+            flex: 0 0 100%;
+            height: 100%;
+            position: relative;
         }
 
         .slide img {
@@ -87,10 +91,15 @@
         function carousel(images, element) {
             const WIDTH = 800;
 
+            let sliderTrack;
+
             (function renderSlider() {
                 const slider = document.createElement("div");
                 slider.classList.add("slider");
                 slider.id = "slider";
+
+                sliderTrack = document.createElement("div");
+                sliderTrack.classList.add("slider-track");
 
                 //rendering images
                 images.forEach((item, index) => {
@@ -106,11 +115,12 @@
                     const imgTitle = document.createElement("div");
                     imgTitle.innerText = item.title;
                     imgTitle.classList.add("imgTitle");
-                    slide.style.left = index * WIDTH + "px"
                     slide.append(imgTitle);
 
-                    slider.append(slide);
+                    sliderTrack.append(slide);
                 });
+
+                slider.append(sliderTrack);
 
                 //rendering control buttons
                 const buttonNext = document.createElement("button");
@@ -150,9 +160,8 @@
             }
 
             function moveSlides() {
-                for (let i = 0; i < totalSlides; i++) {
-                    slides[i].style.left = (i - active) * WIDTH + "px";
-                }
+                // Update transform on the parent track instead of looping over each slide!
+                sliderTrack.style.transform = `translateX(${-active * 100}%)`;
             }
 
             let interval = setInterval(moveNext, 2000);

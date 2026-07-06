@@ -4,6 +4,7 @@ import CountDownTimer from "./CountDownTimer";
 import MobileNoFormatter from "./MobileNoFormatter";
 import Stopwatch from "./StopWatch";
 import DataTable from "./DataTable";
+import ImageCarousel from "./ImageCarousel";
 
 function App() {
     return (
@@ -13,7 +14,8 @@ function App() {
             {/* <CountDownTimer /> */}
             {/* <MobileNoFormatter /> */}
             {/* <Stopwatch /> */}
-            <DataTable />
+            {/* <DataTable /> */}
+            <ImageCarousel />
         </>
     )
 }
