@@ -2,6 +2,7 @@ import OTPInput from "./OTPInput";
 import AutoCompleteWrapper from "./AutoCompleteWrapper";
 import CountDownTimer from "./CountDownTimer";
 import MobileNoFormatter from "./MobileNoFormatter";
+import Stopwatch from "./StopWatch";
 
 function App() {
     return (
@@ -10,6 +11,7 @@ function App() {
             {/* <AutoCompleteWrapper /> */}
             {/* <CountDownTimer /> */}
             <MobileNoFormatter />
+            <Stopwatch />
         </>
     )
 }
