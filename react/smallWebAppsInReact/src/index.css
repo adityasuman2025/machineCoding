@@ -134,3 +134,24 @@ body {
     align-items: center;
     justify-content: center;
 }
+
+
+.light {
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    background-color: grey;
+    list-style: none;
+}
+
+.light.red {
+    background-color: red;
+}
+
+.light.green {
+    background-color: green;
+}
+
+.light.yellow {
+    background-color: yellow;
+}

@@ -7,6 +7,7 @@ import DataTable from "./DataTable";
 import ImageCarousel from "./ImageCarousel";
 import Clock from "./Clock";
 import TicTacToe from "./TicTacToe";
+import TrafficLight from "./TrafficLight";
 
 function App() {
     return (
@@ -19,7 +20,8 @@ function App() {
             {/* <DataTable /> */}
             {/* <ImageCarousel /> */}
             {/* <Clock /> */}
-            <TicTacToe />
+            {/* <TicTacToe /> */}
+            <TrafficLight />
         </>
     )
 }
