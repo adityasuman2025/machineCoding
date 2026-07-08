@@ -6,6 +6,7 @@ import Stopwatch from "./StopWatch";
 import DataTable from "./DataTable";
 import ImageCarousel from "./ImageCarousel";
 import Clock from "./Clock";
+import TicTacToe from "./TicTacToe";
 
 function App() {
     return (
@@ -17,7 +18,8 @@ function App() {
             {/* <Stopwatch /> */}
             {/* <DataTable /> */}
             {/* <ImageCarousel /> */}
-            <Clock />
+            {/* <Clock /> */}
+            <TicTacToe />
         </>
     )
 }
