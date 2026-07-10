@@ -2,12 +2,12 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../store';
 
-interface StockRowProps {
+interface StockItemProps {
     symbol: string;
     style?: React.CSSProperties;
 }
-export const StockRow: React.FC<StockRowProps> = React.memo(({ symbol, style }) => {
-    // [FLOW STEP 9]: StockRow subscribes granularly using useSelector ONLY to its own symbol's price data.
+export const StockItem: React.FC<StockItemProps> = React.memo(({ symbol, style }) => {
+    // [FLOW STEP 9]: StockItem subscribes granularly using useSelector ONLY to its own symbol's price data.
     // If other stocks update but this one does not, this component completely avoids re-rendering.
     const priceData = useSelector((state: RootState) => state.stocks.prices[symbol]);
 
@@ -39,4 +39,4 @@ export const StockRow: React.FC<StockRowProps> = React.memo(({ symbol, style }) 
     );
 });
 
-StockRow.displayName = 'StockRow';
+StockItem.displayName = 'StockItem';

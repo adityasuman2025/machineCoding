@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { List, type RowComponentProps } from 'react-window';
 import type { RootState } from '../store';
-import { StockRow } from './StockRow';
+import { StockItem } from './StockItem';
 
 export const StockGrid: React.FC = () => {
     // [FLOW STEP 8]: Grid subscribes ONLY to the static symbols list.
@@ -12,7 +12,7 @@ export const StockGrid: React.FC = () => {
     // Row component matching the required API structure of react-window v2.2.7
     const RowComponent = ({ index, style }: RowComponentProps) => {
         const symbol = symbols[index];
-        return <StockRow symbol={symbol} style={style} />;
+        return <StockItem symbol={symbol} style={style} />;
     };
 
     return (
