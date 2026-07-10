@@ -26,15 +26,6 @@
 body {
   margin: 0;
   padding: 0;
-  min-height: 100vh;
-}
-
-#root {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-  box-sizing: border-box;
 }
 
 /* Header & Controls */
@@ -56,26 +47,7 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  background-color: rgba(16, 185, 129, 0.1);
-  color: var(--green);
-  border: 1px solid rgba(16, 185, 129, 0.2);
-}
-
-.status-badge.paused {
-  background-color: rgba(239, 68, 68, 0.1);
-  color: var(--red);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-}
-
-/* Stock Table Styling */
+/* Stock Table/Grid Container */
 .stock-table-container {
   background-color: var(--panel-bg);
   border: 1px solid var(--border-color);
@@ -84,32 +56,48 @@ body {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-.stock-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
+/* Header row styling */
+.stock-table-header {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 2fr 1.5fr;
+  background-color: rgba(31, 41, 55, 0.5);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1rem;
 }
 
-.stock-table th {
-  background-color: rgba(31, 41, 55, 0.5);
+.header-cell {
   color: var(--text-secondary);
   font-weight: 600;
   font-size: 0.875rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  padding: 1rem;
-  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
 }
 
-.stock-table td {
-  padding: 0.85rem 1rem;
+/* Row styling */
+.stock-table-row {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 2fr 1.5fr;
+  align-items: stretch;
+  padding: 0 1rem;
+  box-sizing: border-box;
   border-bottom: 1px solid var(--border-color);
-  font-size: 0.925rem;
   transition: background-color 0.15s ease;
 }
 
-.stock-table tbody tr:hover td {
+.stock-table-row:hover {
   background-color: rgba(31, 41, 55, 0.25);
+}
+
+.stock-cell {
+  font-size: 0.925rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  padding: 0 0.5rem;
 }
 
 .stock-symbol {
@@ -117,30 +105,25 @@ body {
   color: #60a5fa;
 }
 
-.stock-name {
-  color: var(--text-secondary);
-  font-size: 0.85rem;
-}
-
-.stock-sector {
-  color: var(--text-secondary);
-}
-
 .stock-price {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-weight: 600;
-  text-align: right;
+  transition: background-color 0.15s ease;
+  height: 100%;
 }
 
 .stock-change {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-weight: 600;
-  text-align: right;
 }
 
 .stock-volume {
-  text-align: right;
   color: var(--text-secondary);
+}
+
+.text-right {
+  justify-content: flex-end;
+  text-align: right;
 }
 
 .text-up {
@@ -153,13 +136,23 @@ body {
 
 /* Animations for Flashing */
 @keyframes flashGreenAnim {
-  0% { background-color: var(--green-flash); }
-  100% { background-color: transparent; }
+  0% {
+    background-color: var(--green-flash);
+  }
+
+  100% {
+    background-color: transparent;
+  }
 }
 
 @keyframes flashRedAnim {
-  0% { background-color: var(--red-flash); }
-  100% { background-color: transparent; }
+  0% {
+    background-color: var(--red-flash);
+  }
+
+  100% {
+    background-color: transparent;
+  }
 }
 
 /* Classes to trigger animations */
