@@ -65,12 +65,22 @@ export interface Comments {
 }
 
 function transformData(data: Comment[]): Comments {
-    return data.reduce((acc, item) => {
-        const parentId = item.parentId;
-        if (parentId && acc.hasOwnProperty(parentId)) acc[parentId].repliesIds.push(item.id);
-        acc[item.id] = { ...item, repliesIds: [] };
-        return acc;
-    }, {})
+    const obj = {};
+
+    data.forEach(item => {
+        const id = String(item.id);
+        const parentId = item.parentId !== null && item.parentId !== undefined ? String(item.parentId) : null;
+
+        if (!obj.hasOwnProperty(id)) obj[id] = { ...item, repliesIds: [] };
+        else obj[id] = { ...(obj[id] || {}), ...item };
+
+        if (parentId) {
+            if (!obj.hasOwnProperty(parentId)) obj[parentId] = { repliesIds: [id] }
+            else obj[parentId] = { ...(obj[parentId] || {}), repliesIds: [...(obj[parentId].repliesIds || []), id] };
+        }
+    });
+
+    return obj;
 }
 
 const PARENT_ID = null;
