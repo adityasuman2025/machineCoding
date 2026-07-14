@@ -20,9 +20,7 @@ function Tree({ treeObj, parentId }: TreeProps) {
             {
                 childIds?.length && isExpanded ?
                     <ul>
-                        {
-                            childIds.map(childId => <Tree key={childId} treeObj={treeObj} parentId={childId} />)
-                        }
+                        {childIds.map((childId: string) => <Tree key={childId} treeObj={treeObj} parentId={childId} />)}
                     </ul>
                     : null
             }

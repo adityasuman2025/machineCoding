@@ -1,5 +1,10 @@
 import Tree from "./Tree";
 
+interface TreeNode {
+    id: number;
+    displayText: string;
+    parentId: number | null;
+}
 const projectTree = [
     {
         id: 4,
@@ -50,12 +55,13 @@ const projectTree = [
     }
 ];
 
-function process(tree): Record<string, any> {
-    const obj = {};
+function process(tree: TreeNode[]) {
+    const obj: Record<string, any> = {};
+    const rootIds: string[] = [];
 
     tree.forEach(item => {
-        const { id: _id, parentId: _parentId } = item;
-        const id = String(_id), parentId = String(_parentId);
+        const id = String(item.id);
+        const parentId = item.parentId !== null && item.parentId !== undefined ? String(item.parentId) : null;
 
         if (!obj.hasOwnProperty(id)) obj[id] = { ...item, childIds: [] };
         else obj[id] = { ...(obj[id] || {}), ...item };
@@ -63,19 +69,17 @@ function process(tree): Record<string, any> {
         if (parentId) {
             if (!obj.hasOwnProperty(parentId)) obj[parentId] = { childIds: [id] }
             else obj[parentId] = { ...(obj[parentId] || {}), childIds: [...(obj[parentId].childIds || []), id] };
-        }
+        } else rootIds.push(id);
     });
 
-    return obj;
+    return { obj, rootIds };
 }
+const { obj: treeObj, rootIds } = process(projectTree);;
 
-function App() {
-    const treeObj = process(projectTree);
-    console.log("treeObj", treeObj)
-
+export default function App() {
     return (
-        <Tree treeObj={treeObj} parentId={"null"} />
+        <ul>
+            {rootIds.map(item => <Tree key={item} treeObj={treeObj} parentId={item} />)}
+        </ul>
     )
 }
-
-export default App
