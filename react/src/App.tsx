@@ -14,6 +14,7 @@ import DynamicLayoutingApp from "./projects/dynamicLayouting/syncExternalStore/A
 import GoogleSheetsApp from "./projects/googleSheets/App";
 import NavbarApp from "./projects/navbar/App";
 import StockTradingDashboardApp from "./projects/stockTradingDashboard/App";
+import Practice from "./projects/Practice";
 import "./App.scoped.css";
 
 function Dashboard() {
@@ -29,6 +30,7 @@ function Dashboard() {
         { name: "Mobile No Formatter", path: "/mobile-no-formatter" },
         { name: "Navbar Tree", path: "/navbar-tree" },
         { name: "OTP Input", path: "/otp-input" },
+        { name: "Practice", path: "/practice" },
         { name: "Stock Trading Dashboard", path: "/stock-trading-dashboard" },
         { name: "Stopwatch", path: "/stopwatch" },
         { name: "Tic Tac Toe", path: "/tic-tac-toe" },
@@ -83,6 +85,7 @@ export default function App() {
                 <Route path="/google-sheets" element={<GoogleSheetsApp />} />
                 <Route path="/navbar-tree" element={<NavbarApp />} />
                 <Route path="/stock-trading-dashboard" element={<StockTradingDashboardApp />} />
+                <Route path="/practice" element={<Practice />} />
             </Routes>
         </Router>
     );
