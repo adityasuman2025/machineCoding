@@ -1,0 +1,19 @@
+.light {
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    background-color: grey;
+    list-style: none;
+}
+
+.red {
+    background-color: red;
+}
+
+.green {
+    background-color: green;
+}
+
+.yellow {
+    background-color: yellow;
+}

@@ -1,0 +1,14 @@
+.tttGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    width: fit-content;
+}
+
+.tttBox {
+    width: 30px;
+    height: 30px;
+    border: 1px solid grey;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

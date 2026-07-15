@@ -1,0 +1,31 @@
+.currencyInputWrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: aliceblue;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.currencyInput {
+    width: 400px;
+    height: 35px;
+    color: #333;
+}
+
+.currencyError {
+    color: red;
+    font-size: 12px;
+    text-align: center;
+}
+
+.content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: aliceblue;
+    padding: 20px;
+    border-radius: 8px;
+}
