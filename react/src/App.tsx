@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Clock from "./projects/Clock";
-import CountDownTimer from "./projects/CountDownTimer";
+import Countdown from "./projects/countdown/Countdown";
 import DataTable from "./projects/DataTable";
 import ImageCarousel from "./projects/ImageCarousel";
 import MobileNoFormatter from "./projects/MobileNoFormatter";
@@ -74,7 +74,7 @@ export default function App() {
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/chess" element={<ChessBishop />} />
                 <Route path="/clock" element={<Clock />} />
-                <Route path="/countdown-timer" element={<CountDownTimer />} />
+                <Route path="/countdown-timer" element={<Countdown />} />
                 <Route path="/data-table" element={<DataTable />} />
                 <Route path="/image-carousel" element={<ImageCarousel />} />
                 <Route path="/mobile-no-formatter" element={<MobileNoFormatter />} />

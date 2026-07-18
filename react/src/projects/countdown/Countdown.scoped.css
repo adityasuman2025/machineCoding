@@ -1,0 +1,27 @@
+.content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    font-size: 40px;
+}
+
+.input {
+    width: 30px;
+    height: 60px;
+    font-size: 40px;
+    padding: 0;
+    text-align: center;
+}
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
