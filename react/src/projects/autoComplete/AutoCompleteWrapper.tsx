@@ -33,7 +33,7 @@ export default function AutoCompleteWrapper() {
         )
     }, []);
 
-    const suggestionRenderer = useCallback((item) => (
+    const suggestionRenderer = useCallback((item: Record<string, any>) => (
         <div className="suggestionItem">
             <span>{item.name}</span>
             <span>{item.email}</span>

@@ -8,13 +8,13 @@ const X_WINNER = new Array(SIZE).fill(X_TURN).join("");
 const O_WINNER = new Array(SIZE).fill(O_TURN).join("");
 const WINNERS = [X_WINNER, O_WINNER];
 
-function getTurn(gridData) {
+function getTurn(gridData: string[][]): string {
     const xCount = gridData.flat().filter(i => i === X_TURN).length;
     const oCount = gridData.flat().filter(i => i === O_TURN).length;
     return xCount === oCount ? X_TURN : O_TURN;
 }
 
-function checkWinner(gridData) {
+function checkWinner(gridData: string[][]): boolean {
     // check rows
     const hasRowWinner = gridData.some((row) => WINNERS.includes(row.join("")));
     if (hasRowWinner) return true;
@@ -39,13 +39,21 @@ function checkWinner(gridData) {
     return false;
 }
 
-function checkDraw(hasWinner, gridData) {
+function checkDraw(hasWinner: boolean, gridData: string[][]): boolean {
     if (hasWinner) return false;
     const isBoardFull = gridData.flat().every(i => i !== "");
     return isBoardFull
 }
 
-const Cell = memo(function ({ rowIdx, colIdx, val, onClick }: Record<string, any>) {
+const createInitialGrid = () => new Array(SIZE).fill(null).map(() => new Array(SIZE).fill(""));
+
+interface CellProps {
+    rowIdx: number;
+    colIdx: number;
+    val: string;
+    onClick: (rowIdx: number, colIdx: number) => void;
+}
+const Cell = memo(function ({ rowIdx, colIdx, val, onClick }: CellProps) {
     // console.log("cell re-render:", rowIdx, colIdx, val);
 
     const handleClick = useCallback(() => {
@@ -60,12 +68,12 @@ const Cell = memo(function ({ rowIdx, colIdx, val, onClick }: Record<string, any
 });
 
 export default function TicTacToe() {
-    const [gridData, setGridData] = useState(new Array(SIZE).fill(0).map((_) => new Array(3).fill("")));
+    const [gridData, setGridData] = useState<string[][]>(createInitialGrid);
     const turn = getTurn(gridData);
     const hasWinner = checkWinner(gridData);
     const isDraw = checkDraw(hasWinner, gridData);
 
-    const handleCellClick = useCallback((rowIdx, colIdx) => {
+    const handleCellClick = useCallback((rowIdx: number, colIdx: number) => {
         setGridData((prev) => {
             if (checkWinner(prev)) return prev;
 
@@ -75,7 +83,7 @@ export default function TicTacToe() {
     }, []);
 
     const handleResetClick = useCallback(() => {
-        setGridData(new Array(SIZE).fill(0).map((_) => new Array(3).fill("")));
+        setGridData(createInitialGrid());
     }, []);
 
     return (

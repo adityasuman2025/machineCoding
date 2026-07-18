@@ -1,8 +1,7 @@
-import { memo, useState, CSSProperties, useCallback } from "react";
+import { memo, useState, CSSProperties, useCallback, useMemo } from "react";
 import "./ChessBishop.scoped.css";
 
-const SIZE = 8;
-const ROWS = new Array(SIZE).fill(0), COLS = new Array(SIZE).fill(0);
+const DEFAULT_SIZE = 8;
 
 function isCellHighlighted(rowIdx: number, colIdx: number, pointedCell: PointedCellType) {
     if (!pointedCell) return false;
@@ -39,7 +38,10 @@ function Cell({
 }
 const MemoisedCell = memo(Cell);
 
-export default function ChessBishop() {
+interface ChessBishopProps {
+    size?: number;
+}
+export default function ChessBishop({ size = DEFAULT_SIZE }: ChessBishopProps) {
     const [pointedCell, setPointedCell] = useState<PointedCellType | undefined>();
 
     const handleMouseOver = useCallback((rowIdx: number, colIdx: number) => {
@@ -48,13 +50,15 @@ export default function ChessBishop() {
 
     const handleMouseLeave = useCallback(() => {
         setPointedCell(undefined);
-    }, [])
+    }, []);
+
+    const gridArray = useMemo(() => Array.from({ length: size }), [size]);
 
     return (
-        <section className="grid" style={{ "--size": SIZE } as CSSProperties} onMouseLeave={handleMouseLeave}>
+        <section className="grid" style={{ "--size": size } as CSSProperties} onMouseLeave={handleMouseLeave}>
             {
-                ROWS.map((_, rowIdx) =>
-                    COLS.map((_, colIdx) => {
+                gridArray.map((_, rowIdx) =>
+                    gridArray.map((_, colIdx) => {
                         const isBlack = (rowIdx + colIdx) % 2 === 0;
                         const isHighlighted = isCellHighlighted(rowIdx, colIdx, pointedCell);
 

@@ -1,4 +1,4 @@
-import { useState, useCallback, memo, useMemo, useEffect } from "react";
+import { useState, useCallback, memo, useMemo, useEffect, ChangeEvent } from "react";
 
 function mockApiCall() {
     const USERS = [
@@ -225,8 +225,14 @@ function mockApiCall() {
     });
 };
 
+interface User {
+    id: number,
+    name: string,
+    age: number
+    occupation: string,
+}
 
-const COLUMNS = [
+const COLUMNS: { label: string, key: keyof User }[] = [
     { label: "ID", key: "id" },
     { label: "Name", key: "name" },
     { label: "Age", key: "age" },
@@ -234,7 +240,7 @@ const COLUMNS = [
 ];
 const SIZES = [5, 10, 20];
 
-const TableRow = memo(function ({ item }: { item: Record<string, any> }) {
+const TableRow = memo(function ({ item }: { item: User }) {
     // console.log("TableRow re-render:", item.id)
     return (
         <tr>
@@ -246,7 +252,7 @@ const TableRow = memo(function ({ item }: { item: Record<string, any> }) {
 })
 
 export default function DataTable() {
-    const [users, setUsers] = useState([]);
+    const [users, setUsers] = useState<User[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [pageSize, setPageSize] = useState(SIZES[0]);
     const [activePageIdx, setActivePageIdx] = useState(0);
@@ -256,8 +262,6 @@ export default function DataTable() {
     const start = activePageIdx * pageSize;  // no need to wrap in usMemo, as they are not aheavy calculation and also they are primitives and primitives are compared by value instead of reference when passed as prop
     const data = useMemo(() => users.slice(start, start + pageSize), [users, start, pageSize]);
 
-    console.log("hi");
-
     useEffect(() => {
         mockApiCall().then((resp: any) => {
             setUsers(resp);
@@ -265,7 +269,7 @@ export default function DataTable() {
         });
     }, [])
 
-    const handlePageSizeChange = useCallback((e) => {
+    const handlePageSizeChange = useCallback((e: ChangeEvent<HTMLSelectElement>) => {
         const size = Number(e.target.value);
         setPageSize(size);
         setActivePageIdx(0);

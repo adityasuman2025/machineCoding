@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 
-function pad(num) {
+function pad(num: number) {
     return String(num).padStart(2, "0");
 }
 
 export default function Clock() {
-    const timerRef = useRef(null);
+    const timerRef = useRef<ReturnType<typeof setTimeout>>(null);
 
     const [currTimestamp, setCurrTimestamp] = useState(Date.now());
 

@@ -1,7 +1,14 @@
 import { useState, useEffect } from "react";
 import "./TrafficLight.scoped.css";
 
-const UPDATE_SEQ = [
+type TrafficColor = string;
+
+interface UpdateSeqItem {
+    color: TrafficColor;
+    duration: number;
+}
+
+const DEFAULT_UPDATE_SEQ: UpdateSeqItem[] = [
     {
         color: "green",
         duration: 4000,
@@ -15,28 +22,36 @@ const UPDATE_SEQ = [
         duration: 3000,
     },
 ];
-const LAYOUT_ORDER = ["red", "yellow", "green"];
-export default function TrafficLight() {
+
+const DEFAULT_LAYOUT_ORDER: TrafficColor[] = ["red", "yellow", "green"];
+
+interface TrafficLightProps {
+    sequence?: UpdateSeqItem[];
+    layout?: TrafficColor[];
+}
+export default function TrafficLight({
+    sequence = DEFAULT_UPDATE_SEQ,
+    layout = DEFAULT_LAYOUT_ORDER,
+}: TrafficLightProps) {
     const [activeColorIdx, setActiveColorIdx] = useState(0);
 
     useEffect(() => {
-        const { duration } = UPDATE_SEQ[activeColorIdx];
+        if (sequence.length === 0) return;
+        const { duration } = sequence[activeColorIdx] || {};
         const timer = setTimeout(() => {
-            setActiveColorIdx((prev) => (prev + 1) % UPDATE_SEQ.length);
+            setActiveColorIdx((prev) => (prev + 1) % sequence.length);
         }, duration);
 
         return () => clearTimeout(timer);
-    }, [activeColorIdx]);
+    }, [activeColorIdx, sequence]);
 
-    const activeColor = UPDATE_SEQ[activeColorIdx].color;
+    const activeColor = sequence[activeColorIdx]?.color;
     return (
         <ul>
-            {LAYOUT_ORDER.map(color => (
+            {layout.map(color => (
                 <li
                     key={color}
-                    className={
-                        "light " + (activeColor === color ? color : "")
-                    }
+                    className={`light ${activeColor === color ? color : ""}`}
                 ></li>
             ))}
         </ul>

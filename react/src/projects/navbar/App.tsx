@@ -55,7 +55,7 @@ const projectTree = [
     }
 ];
 
-function process(tree: TreeNode[]) {
+function transformData(tree: TreeNode[]) {
     const obj: Record<string, any> = {};
     const rootIds: string[] = [];
 
@@ -74,7 +74,7 @@ function process(tree: TreeNode[]) {
 
     return { obj, rootIds };
 }
-const { obj: treeObj, rootIds } = process(projectTree);;
+const { obj: treeObj, rootIds } = transformData(projectTree);
 
 export default function App() {
     return (

@@ -7,7 +7,7 @@ interface TreeProps {
 function Tree({ treeObj, parentId }: TreeProps) {
     const { childIds, ...rest } = useMemo(() => treeObj[parentId], [treeObj, parentId]);
 
-    const [isExpanded, setIsExpanded] = useState(parentId === "null" ? true : false);
+    const [isExpanded, setIsExpanded] = useState(false);
 
     const handleClick = useCallback(() => {
         setIsExpanded(prev => !prev)

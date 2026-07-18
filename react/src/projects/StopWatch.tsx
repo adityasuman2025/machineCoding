@@ -1,6 +1,11 @@
 import { useCallback, useState, useEffect, useRef, memo } from "react";
 
-function Buttons({ isRunning, onStartStopClick, onResetClick }) {
+interface ButtonsProps {
+    isRunning: boolean;
+    onStartStopClick: () => void;
+    onResetClick: () => void;
+}
+function Buttons({ isRunning, onStartStopClick, onResetClick }: ButtonsProps) {
     return (
         <div>
             <button onClick={onStartStopClick}>{isRunning ? "Stop" : "Start"}</button>
@@ -11,6 +16,7 @@ function Buttons({ isRunning, onStartStopClick, onResetClick }) {
 const MemoisedButtons = memo(Buttons);
 
 export default function Stopwatch() {
+    const startTimeRef = useRef(0);
     const timerRef = useRef(null);
 
     const [isRunning, setIsRunning] = useState(false);
@@ -22,29 +28,31 @@ export default function Stopwatch() {
     }, []);
 
     const runTimer = useCallback(() => {
-        clearTimer();
-        const startTime = Math.floor(Date.now() - timeElapsed);
-
         timerRef.current = setInterval(() => {
-            setTimeElapsed(Date.now() - startTime);
+            setTimeElapsed(Date.now() - startTimeRef.current);
         }, 50);
-    }, [timeElapsed]);
+    }, []);
 
     useEffect(() => {
-        if (isRunning) runTimer();
-        else clearTimer();
-
         return () => clearTimer();
-    }, [isRunning, runTimer]);
+    }, [clearTimer]);
 
     const handleStartStopClick = useCallback(() => {
+        clearTimer();
+
+        if (!isRunning) {
+            startTimeRef.current = Date.now() - timeElapsed;
+            runTimer();
+        }
+
         setIsRunning((prev) => !prev);
-    }, []);
+    }, [isRunning, timeElapsed, runTimer, clearTimer]);
 
     const handleResetClick = useCallback(() => {
+        clearTimer();
         setIsRunning(false);
         setTimeElapsed(0);
-    }, []);
+    }, [clearTimer]);
 
     const milliS = Math.floor((timeElapsed % 1000) / 10);
     const seconds = Math.floor((timeElapsed / 1000) % 60);

@@ -1,4 +1,4 @@
-import { memo, useState, useRef, useCallback, useMemo, ReactNode } from "react";
+import { memo, useState, useRef, useCallback, useMemo, ReactNode, ChangeEvent } from "react";
 import "./AutoComplete.scoped.css";
 
 function debounce(func: Function, delay: number) {
@@ -55,7 +55,7 @@ function AutoComplete({
 
     const [setInCache, getFromCache] = useCache(cacheTimeToLive);
 
-    const handleChange = useCallback(async (e) => {
+    const handleChange = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
         const qry = String(e.target.value || "").trim();
         if (!qry) return setLocalSuggs([]);
 
