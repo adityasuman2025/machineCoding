@@ -14,6 +14,7 @@ import DynamicLayoutingApp from "./projects/dynamicLayouting/syncExternalStore/A
 import GoogleSheetsApp from "./projects/googleSheets/App";
 import NavbarApp from "./projects/navbar/App";
 import StockTradingDashboardApp from "./projects/stockTradingDashboard/App";
+import ChessBishop from "./projects/chessBishop/ChessBishop";
 import Practice from "./projects/Practice";
 import "./App.scoped.css";
 
@@ -21,6 +22,7 @@ function Dashboard() {
     const projects = [
         { name: "Auto Complete", path: "/auto-complete" },
         { name: "Clock", path: "/clock" },
+        { name: "Chess Bishop", path: "/chess" },
         { name: "Comments", path: "/comments" },
         { name: "CountDown Timer", path: "/countdown-timer" },
         { name: "Data Table", path: "/data-table" },
@@ -70,6 +72,7 @@ export default function App() {
         <Router>
             <Routes>
                 <Route path="/" element={<Dashboard />} />
+                <Route path="/chess" element={<ChessBishop />} />
                 <Route path="/clock" element={<Clock />} />
                 <Route path="/countdown-timer" element={<CountDownTimer />} />
                 <Route path="/data-table" element={<DataTable />} />
