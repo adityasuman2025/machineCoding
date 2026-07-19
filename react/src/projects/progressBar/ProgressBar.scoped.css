@@ -1,0 +1,17 @@
+.progress {
+    width: 400px;
+    height: 20px;
+    box-sizing: border-box;
+    background-color: azure;
+    border: 1px solid grey;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 10px;
+}
+
+.bar {
+    height: 100%;
+    width: 100%;
+    background-color: aquamarine;
+    transform-origin: left;
+}

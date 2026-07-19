@@ -16,27 +16,33 @@ import NavbarApp from "./projects/navbar/App";
 import StockTradingDashboardApp from "./projects/stockTradingDashboard/App";
 import ChessBishop from "./projects/chessBishop/ChessBishop";
 import Practice from "./projects/Practice";
+import ProgressBar from "./projects/progressBar/ProgressBar";
 import "./App.scoped.css";
+
 
 function Dashboard() {
     const projects = [
+        // essentials
         { name: "Auto Complete", path: "/auto-complete" },
-        { name: "Clock", path: "/clock" },
         { name: "Chess Bishop", path: "/chess" },
-        { name: "Comments", path: "/comments" },
         { name: "CountDown Timer", path: "/countdown-timer" },
         { name: "Data Table", path: "/data-table" },
-        { name: "Dynamic Layouting", path: "/dynamic-layouting" },
-        { name: "Google Sheets", path: "/google-sheets" },
-        { name: "Image Carousel", path: "/image-carousel" },
         { name: "Mobile No Formatter", path: "/mobile-no-formatter" },
         { name: "Navbar Tree", path: "/navbar-tree" },
         { name: "OTP Input", path: "/otp-input" },
-        { name: "Practice", path: "/practice" },
-        { name: "Stock Trading Dashboard", path: "/stock-trading-dashboard" },
+        { name: "Comments", path: "/comments" },
         { name: "Stopwatch", path: "/stopwatch" },
         { name: "Tic Tac Toe", path: "/tic-tac-toe" },
+        { name: "Stock Trading Dashboard", path: "/stock-trading-dashboard" },
+        { name: "Progress Bar", path: "/progress-bar" },
+        { name: "Image Carousel", path: "/image-carousel" },
+
+        // others
+        { name: "Dynamic Layouting", path: "/dynamic-layouting" },
+        { name: "Google Sheets", path: "/google-sheets" },
         { name: "Traffic Light", path: "/traffic-light" },
+        { name: "Clock", path: "/clock" },
+        { name: "Practice", path: "/practice" },
     ];
 
     return (
@@ -88,6 +94,7 @@ export default function App() {
                 <Route path="/google-sheets" element={<GoogleSheetsApp />} />
                 <Route path="/navbar-tree" element={<NavbarApp />} />
                 <Route path="/stock-trading-dashboard" element={<StockTradingDashboardApp />} />
+                <Route path="/progress-bar" element={<ProgressBar />} />
                 <Route path="/practice" element={<Practice />} />
             </Routes>
         </Router>
