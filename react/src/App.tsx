@@ -17,6 +17,7 @@ import StockTradingDashboardApp from "./projects/stockTradingDashboard/App";
 import ChessBishop from "./projects/chessBishop/ChessBishop";
 import Practice from "./projects/Practice";
 import ProgressBar from "./projects/progressBar/ProgressBar";
+import StarRating from "./projects/starRating/StarRating";
 import "./App.scoped.css";
 
 
@@ -35,6 +36,7 @@ function Dashboard() {
         { name: "Tic Tac Toe", path: "/tic-tac-toe" },
         { name: "Stock Trading Dashboard", path: "/stock-trading-dashboard" },
         { name: "Progress Bar", path: "/progress-bar" },
+        { name: "Star Rating", path: "/star-rating" },
         { name: "Image Carousel", path: "/image-carousel" },
 
         // others
@@ -95,6 +97,7 @@ export default function App() {
                 <Route path="/navbar-tree" element={<NavbarApp />} />
                 <Route path="/stock-trading-dashboard" element={<StockTradingDashboardApp />} />
                 <Route path="/progress-bar" element={<ProgressBar />} />
+                <Route path="/star-rating" element={<StarRating />} />
                 <Route path="/practice" element={<Practice />} />
             </Routes>
         </Router>
