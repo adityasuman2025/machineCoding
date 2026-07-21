@@ -1,0 +1,39 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.wrapper {
+    margin: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: lightgray;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    width: fit-content;
+}
+
+.dice {
+    border-radius: 8px;
+    padding: 5px;
+    box-sizing: border-box;
+    background-color: white;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+}
+
+.dot {
+    width: 9px;
+    height: 9px;
+    background-color: grey;
+    border-radius: 100%;
+}
+
+.dummy {
+    width: 9px;
+    height: 9px;
+}

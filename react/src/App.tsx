@@ -18,6 +18,7 @@ import ChessBishop from "./projects/chessBishop/ChessBishop";
 import Practice from "./projects/Practice";
 import ProgressBar from "./projects/progressBar/ProgressBar";
 import StarRating from "./projects/starRating/StarRating";
+import DiceRoll from "./projects/diceRoll/DiceRoll";
 import "./App.scoped.css";
 
 
@@ -34,6 +35,7 @@ function Dashboard() {
         { name: "Comments", path: "/comments" },
         { name: "Stopwatch", path: "/stopwatch" },
         { name: "Tic Tac Toe", path: "/tic-tac-toe" },
+        { name: "Dice Roll", path: "/dice-roll" },
         { name: "Stock Trading Dashboard", path: "/stock-trading-dashboard" },
         { name: "Progress Bar", path: "/progress-bar" },
         { name: "Star Rating", path: "/star-rating" },
@@ -98,6 +100,7 @@ export default function App() {
                 <Route path="/stock-trading-dashboard" element={<StockTradingDashboardApp />} />
                 <Route path="/progress-bar" element={<ProgressBar />} />
                 <Route path="/star-rating" element={<StarRating />} />
+                <Route path="/dice-roll" element={<DiceRoll />} />
                 <Route path="/practice" element={<Practice />} />
             </Routes>
         </Router>
