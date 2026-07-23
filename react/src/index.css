@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+@layer base {
+
+    /* because tailwind removes input border by default */
+    input {
+        border: 1px solid #ccc;
+    }
+}
