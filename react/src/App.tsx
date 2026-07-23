@@ -19,6 +19,7 @@ import Practice from "./projects/Practice";
 import ProgressBar from "./projects/progressBar/ProgressBar";
 import StarRating from "./projects/starRating/StarRating";
 import DiceRoll from "./projects/diceRoll/DiceRoll";
+import AutoComplete2 from "./projects/autoComplete2/AutoComplete2";
 import "./App.scoped.css";
 
 
@@ -26,6 +27,7 @@ function Dashboard() {
     const projects = [
         // essentials
         { name: "Auto Complete", path: "/auto-complete" },
+        { name: "Auto Complete 2", path: "/auto-complete-2" },
         { name: "Chess Bishop", path: "/chess" },
         { name: "CountDown Timer", path: "/countdown-timer" },
         { name: "Data Table", path: "/data-table" },
@@ -93,6 +95,7 @@ export default function App() {
                 <Route path="/tic-tac-toe" element={<TicTacToe />} />
                 <Route path="/traffic-light" element={<TrafficLight />} />
                 <Route path="/auto-complete" element={<AutoCompleteWrapper />} />
+                <Route path="/auto-complete-2" element={<AutoComplete2 />} />
                 <Route path="/comments" element={<CommentsApp />} />
                 <Route path="/dynamic-layouting" element={<DynamicLayoutingApp />} />
                 <Route path="/google-sheets" element={<GoogleSheetsApp />} />
