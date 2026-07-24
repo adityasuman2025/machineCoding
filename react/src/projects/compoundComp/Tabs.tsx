@@ -48,9 +48,9 @@ function Tabs({ children, className = "", defaultTab }: TabsProps) {
 
     return (
         <TabContext.Provider value={contextValues}>
-            <section className={`${className}`}>
+            <div className={`${className}`}>
                 {children}
-            </section>
+            </div>
         </TabContext.Provider>
     )
     // TODO: use useTabs hook, provide context
@@ -63,7 +63,7 @@ interface ListProps {
 function List({ children, className = "" }: ListProps) {
     const { setActiveTab, tabs } = useTabsContext();
 
-    function handleKeyDown(e: KeyboardEvent<HTMLUListElement>) {
+    function handleKeyDown(e: KeyboardEvent<HTMLDivElement>) {
         const key = e.key;
         const target = e.target as HTMLElement;
 
@@ -84,9 +84,9 @@ function List({ children, className = "" }: ListProps) {
     }
 
     return (
-        <ul role="tablist" className={`flex items-center gap-2 m-2 ${className}`} onKeyDown={handleKeyDown}>
+        <div role="tablist" className={`flex items-center gap-2 m-2 ${className}`} onKeyDown={handleKeyDown}>
             {children}
-        </ul>
+        </div>
     )
     // TODO: render role="tablist", handle arrow key navigation
 }
@@ -109,17 +109,17 @@ function Tab({ id, children, className = "" }: TabProps) {
     }
 
     return (
-        <li
+        <button
             id={id}
             role="tab"
             aria-selected={isActive}
             tabIndex={isActive ? 0 : -1}
             aria-controls={`panel-${id}`}
-            className={`flex items-center gap-2 p-2 cursor-pointer bg-red-50 focus:outline-2 focus:outline-red-600 focus:outline-offset-2  ${isActive ? "bg-red-100" : ""} ${className}`}
+            className={`flex items-center gap-2 p-2 cursor-pointer focus:outline-2 focus:outline-gray-600 focus:outline-offset-2 ${isActive ? "bg-gray-200" : ""} ${className}`}
             onClick={handleTabClick}
         >
             {children}
-        </li>
+        </button>
     )
     // TODO: render role="tab", aria-selected, aria-controls, tabIndex, Tailwind styles
 }
@@ -131,17 +131,18 @@ interface PanelProps {
 }
 function Panel({ tabId, className = "", children }: PanelProps) {
     const { activeTab } = useTabsContext();
-
+    const isActive = activeTab === tabId;
     return (
-        <section
+        <div
             id={`panel-${tabId}`}
             role="tabpanel"
             aria-labelledby={tabId}
-            hidden={activeTab !== tabId}
+            tabIndex={isActive ? 0 : -1}
+            hidden={!isActive}
             className={`m-2 ${className}`}
         >
             {children}
-        </section>
+        </div>
     )
     // TODO: render role="tabpanel", aria-labelledby, hide if not active
 };
