@@ -3,8 +3,8 @@ import './Practice.scoped.css';
 
 export default function Practice() {
     return (
-        <div>
+        <main>
             <h1>Practice</h1>
-        </div>
+        </main>
     );
 }

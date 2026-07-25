@@ -22,6 +22,7 @@ import DiceRoll from "./projects/diceRoll/DiceRoll";
 import AutoComplete2 from "./projects/autoComplete2/AutoComplete2";
 import CompoundComp from "./projects/compoundComp/CompoundComp";
 import ModalWithFocusTrap from "./projects/modalWithFocusTrap/ModalWithFocusTrap";
+import Todos from "./projects/todos/Todos";
 import "./App.scoped.css";
 
 
@@ -46,6 +47,7 @@ function Dashboard() {
         { name: "Image Carousel", path: "/image-carousel" },
         { name: "Compound Component", path: "/compound-comp" },
         { name: "Modal With Focus Trap", path: "/modal-with-focus-trap" },
+        { name: "Todos", path: "/todos" },
 
         // others
         { name: "Dynamic Layouting", path: "/dynamic-layouting" },
@@ -111,6 +113,7 @@ export default function App() {
                 <Route path="/practice" element={<Practice />} />
                 <Route path="/compound-comp" element={<CompoundComp />} />
                 <Route path="/modal-with-focus-trap" element={<ModalWithFocusTrap />} />
+                <Route path="/todos" element={<Todos />} />
             </Routes>
         </Router>
     );
