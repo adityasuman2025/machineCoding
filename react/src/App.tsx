@@ -21,6 +21,7 @@ import StarRating from "./projects/starRating/StarRating";
 import DiceRoll from "./projects/diceRoll/DiceRoll";
 import AutoComplete2 from "./projects/autoComplete2/AutoComplete2";
 import CompoundComp from "./projects/compoundComp/CompoundComp";
+import ModalWithFocusTrap from "./projects/modalWithFocusTrap/ModalWithFocusTrap";
 import "./App.scoped.css";
 
 
@@ -44,6 +45,7 @@ function Dashboard() {
         { name: "Star Rating", path: "/star-rating" },
         { name: "Image Carousel", path: "/image-carousel" },
         { name: "Compound Component", path: "/compound-comp" },
+        { name: "Modal With Focus Trap", path: "/modal-with-focus-trap" },
 
         // others
         { name: "Dynamic Layouting", path: "/dynamic-layouting" },
@@ -108,6 +110,7 @@ export default function App() {
                 <Route path="/dice-roll" element={<DiceRoll />} />
                 <Route path="/practice" element={<Practice />} />
                 <Route path="/compound-comp" element={<CompoundComp />} />
+                <Route path="/modal-with-focus-trap" element={<ModalWithFocusTrap />} />
             </Routes>
         </Router>
     );
