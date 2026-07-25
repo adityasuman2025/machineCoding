@@ -1,0 +1,23 @@
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: auto;
+}
+
+.stars {
+    width: fit-content;
+    background-color: antiquewhite;
+    padding: 5px;
+}
+
+.star {
+    font-size: 30px;
+    cursor: pointer;
+    padding: 0 5px;
+}
+
+.colored {
+    color: red;
+}
