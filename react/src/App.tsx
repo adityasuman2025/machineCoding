@@ -23,6 +23,7 @@ import AutoComplete2 from "./projects/autoComplete2/AutoComplete2";
 import CompoundComp from "./projects/compoundComp/CompoundComp";
 import ModalWithFocusTrap from "./projects/modalWithFocusTrap/ModalWithFocusTrap";
 import Todos from "./projects/todos/Todos";
+import AreaSelector from "./projects/areaSelector/AreaSelector";
 import "./App.scoped.css";
 
 
@@ -30,7 +31,6 @@ function Dashboard() {
     const projects = [
         // essentials
         { name: "Auto Complete", path: "/auto-complete" },
-        { name: "Auto Complete 2", path: "/auto-complete-2" },
         { name: "Chess Bishop", path: "/chess" },
         { name: "CountDown Timer", path: "/countdown-timer" },
         { name: "Data Table", path: "/data-table" },
@@ -50,6 +50,8 @@ function Dashboard() {
         { name: "Todos", path: "/todos" },
 
         // others
+        { name: "Area Selector", path: "/area-selector" },
+        { name: "Auto Complete 2", path: "/auto-complete-2" },
         { name: "Dynamic Layouting", path: "/dynamic-layouting" },
         { name: "Google Sheets", path: "/google-sheets" },
         { name: "Traffic Light", path: "/traffic-light" },
@@ -114,6 +116,7 @@ export default function App() {
                 <Route path="/compound-comp" element={<CompoundComp />} />
                 <Route path="/modal-with-focus-trap" element={<ModalWithFocusTrap />} />
                 <Route path="/todos" element={<Todos />} />
+                <Route path="/area-selector" element={<AreaSelector />} />
             </Routes>
         </Router>
     );

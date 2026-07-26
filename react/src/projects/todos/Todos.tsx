@@ -105,6 +105,8 @@ export default function Todos() {
         const key = e.key;
         if (key !== "ArrowDown" && key !== "ArrowUp") return;
 
+        e.preventDefault();
+
         const items = Array.from(document.querySelectorAll<HTMLElement>(".todo-listItem"));
         if (!items.length) return;
 
@@ -113,13 +115,9 @@ export default function Todos() {
         if (currActiveEleIdx < 0) return;
 
         if (key === "ArrowDown") {
-            e.preventDefault();
-
             const next = Math.min(currActiveEleIdx + 1, items.length - 1);
             items[next]?.focus();
         } else if (key === "ArrowUp") {
-            e.preventDefault();
-
             const prev = Math.max(currActiveEleIdx - 1, 0);
             items[prev]?.focus();
         }
