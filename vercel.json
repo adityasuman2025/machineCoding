@@ -1,0 +1,8 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": true,
+  "rewrites": [
+    { "source": "/vanillaJs/(.*)", "destination": "/vanillaJs/$1" },
+    { "source": "/((?!assets|vanillaJs|xxxs.png|robots.txt).*).*", "destination": "/index.html" }
+  ]
+}

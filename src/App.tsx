@@ -76,6 +76,14 @@ function Dashboard() {
                         Aditya Suman
                     </a>
                 </p>
+                <div className="mt-3">
+                    <a
+                        href="/vanillaJs/index.html"
+                        className="inline-block px-3 py-1.5 bg-neutral-800 border border-neutral-700 rounded-md text-sm text-neutral-300 hover:text-white hover:bg-neutral-700 transition-colors"
+                    >
+                        Explore Vanilla JS Projects ➔
+                    </a>
+                </div>
             </header>
 
             <main className="max-w-6xl mx-auto">
