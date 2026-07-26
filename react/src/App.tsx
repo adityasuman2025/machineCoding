@@ -24,65 +24,103 @@ import CompoundComp from "./projects/compoundComp/CompoundComp";
 import ModalWithFocusTrap from "./projects/modalWithFocusTrap/ModalWithFocusTrap";
 import Todos from "./projects/todos/Todos";
 import AreaSelector from "./projects/areaSelector/AreaSelector";
-import "./App.scoped.css";
+import Calculator from "./projects/calculator/Calculator";
 
+const ESSENTIAL_PROJECTS = [
+    { name: "Auto Complete", path: "/auto-complete" },
+    { name: "Chess Bishop", path: "/chess" },
+    { name: "CountDown Timer", path: "/countdown-timer" },
+    { name: "Data Table", path: "/data-table" },
+    { name: "Mobile No Formatter", path: "/mobile-no-formatter" },
+    { name: "Navbar Tree", path: "/navbar-tree" },
+    { name: "OTP Input", path: "/otp-input" },
+    { name: "Comments", path: "/comments" },
+    { name: "Stopwatch", path: "/stopwatch" },
+    { name: "Tic Tac Toe", path: "/tic-tac-toe" },
+    { name: "Dice Roll", path: "/dice-roll" },
+    { name: "Stock Trading Dashboard", path: "/stock-trading-dashboard" },
+    { name: "Progress Bar", path: "/progress-bar" },
+    { name: "Star Rating", path: "/star-rating" },
+    { name: "Image Carousel", path: "/image-carousel" },
+    { name: "Compound Component", path: "/compound-comp" },
+    { name: "Modal With Focus Trap", path: "/modal-with-focus-trap" },
+    { name: "Todos", path: "/todos" },
+];
+
+const OTHER_PROJECTS = [
+    { name: "Calculator", path: "/calculator" },
+    { name: "Area Selector", path: "/area-selector" },
+    { name: "Auto Complete 2", path: "/auto-complete-2" },
+    { name: "Dynamic Layouting", path: "/dynamic-layouting" },
+    { name: "Google Sheets", path: "/google-sheets" },
+    { name: "Traffic Light", path: "/traffic-light" },
+    { name: "Clock", path: "/clock" },
+    { name: "Practice", path: "/practice" },
+];
 
 function Dashboard() {
-    const projects = [
-        // essentials
-        { name: "Auto Complete", path: "/auto-complete" },
-        { name: "Chess Bishop", path: "/chess" },
-        { name: "CountDown Timer", path: "/countdown-timer" },
-        { name: "Data Table", path: "/data-table" },
-        { name: "Mobile No Formatter", path: "/mobile-no-formatter" },
-        { name: "Navbar Tree", path: "/navbar-tree" },
-        { name: "OTP Input", path: "/otp-input" },
-        { name: "Comments", path: "/comments" },
-        { name: "Stopwatch", path: "/stopwatch" },
-        { name: "Tic Tac Toe", path: "/tic-tac-toe" },
-        { name: "Dice Roll", path: "/dice-roll" },
-        { name: "Stock Trading Dashboard", path: "/stock-trading-dashboard" },
-        { name: "Progress Bar", path: "/progress-bar" },
-        { name: "Star Rating", path: "/star-rating" },
-        { name: "Image Carousel", path: "/image-carousel" },
-        { name: "Compound Component", path: "/compound-comp" },
-        { name: "Modal With Focus Trap", path: "/modal-with-focus-trap" },
-        { name: "Todos", path: "/todos" },
-
-        // others
-        { name: "Area Selector", path: "/area-selector" },
-        { name: "Auto Complete 2", path: "/auto-complete-2" },
-        { name: "Dynamic Layouting", path: "/dynamic-layouting" },
-        { name: "Google Sheets", path: "/google-sheets" },
-        { name: "Traffic Light", path: "/traffic-light" },
-        { name: "Clock", path: "/clock" },
-        { name: "Practice", path: "/practice" },
-    ];
-
     return (
-        <div className="container">
-            <header className="header">
-                <h1 className="title">
-                    Web Frontend Machine Coding Round Questions
+        <div className="min-h-screen bg-neutral-900 text-neutral-100 p-6">
+            <header className="text-center mb-8">
+                <h1 className="text-3xl font-bold mb-2">
+                    Web Frontend Machine Coding Round Questions in React
                 </h1>
-                <p className="subtitle">
-                    A collection of practice problems by <a href="https://adityas.site" target="_blank">Aditya Suman</a>
+                <p className="text-neutral-400">
+                    A collection of practice problems by{" "}
+                    <a
+                        href="https://adityas.site"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-white underline hover:text-neutral-200"
+                    >
+                        Aditya Suman
+                    </a>
                 </p>
             </header>
 
-            <main className="main">
-                <div className="grid">
-                    {projects.map((project) => (
+            <main className="max-w-6xl mx-auto">
+                <h2 className="text-neutral-400 text-lg font-medium border-b border-neutral-700 pb-2 mt-8 mb-4">
+                    Essentials
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                    {ESSENTIAL_PROJECTS.map((project) => (
                         <Link
                             key={project.path}
                             to={project.path}
-                            className="link"
+                            className="p-4 bg-neutral-800 border border-neutral-700 rounded-lg hover:bg-neutral-700"
+                        >
+                            {project.name}
+                        </Link>
+                    ))}
+                </div>
+
+                <h2 className="text-neutral-400 text-lg font-medium border-b border-neutral-700 pb-2 mt-10 mb-4">
+                    Others
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                    {OTHER_PROJECTS.map((project) => (
+                        <Link
+                            key={project.path}
+                            to={project.path}
+                            className="p-4 bg-neutral-800 border border-neutral-700 rounded-lg hover:bg-neutral-700"
                         >
                             {project.name}
                         </Link>
                     ))}
                 </div>
             </main>
+
+            <footer className="text-center mt-10 text-neutral-400 text-sm">
+                explore more at{" "}
+                <a
+                    href="https://interview.adityas.site"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-white underline hover:text-neutral-200"
+                >
+                    MNgo Interview
+                </a>
+            </footer>
         </div>
     );
 }
@@ -117,6 +155,7 @@ export default function App() {
                 <Route path="/modal-with-focus-trap" element={<ModalWithFocusTrap />} />
                 <Route path="/todos" element={<Todos />} />
                 <Route path="/area-selector" element={<AreaSelector />} />
+                <Route path="/calculator" element={<Calculator />} />
             </Routes>
         </Router>
     );

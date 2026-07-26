@@ -3,7 +3,8 @@
 @layer base {
 
     /* because tailwind removes input border by default */
-    input {
+    input,
+    button {
         border: 1px solid #ccc;
     }
 }

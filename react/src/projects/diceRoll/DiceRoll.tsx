@@ -43,9 +43,9 @@ export default function DiceRoll() {
     }, []);
 
     return (
-        <section className="container">
-            <form onSubmit={handleSubmit}>
-                <p>Number of dice</p>
+        <section className="container2">
+            <p>Number of dice</p>
+            <form onSubmit={handleSubmit} className="diceForm">
                 <input name="diceCount" type="number" min={1} max={12} required={true} />
                 <button>roll</button>
             </form>

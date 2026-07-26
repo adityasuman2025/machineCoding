@@ -52,7 +52,7 @@ export default function StarRating({
     }
 
     return (
-        <div className="container">
+        <div className="container2">
             <div className="stars" role="radiogroup" aria-label="Star Rating" onMouseLeave={handleMouseLeave} onKeyDown={handleKeyDown}>
                 {
                     Array.from({ length: maxStars }, (_, idx) => (
