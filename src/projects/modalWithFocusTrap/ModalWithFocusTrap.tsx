@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, type RefObject, type SyntheticEvent } from 'react';
+import { createPortal } from "react-dom";
 
 const FOCUSABLE_SELECTORS = "button, input, select, textarea, [href], [tabindex]";
 
@@ -80,7 +81,7 @@ export function ConfirmDialog({ isOpen, title, message, onConfirm, onCancel }: C
     }
 
     if (!isOpen) return null;
-    return (
+    return createPortal(
         <div
             className='absolute top-0 right-0 flex md:items-center md:justify-center items-end bg-slate-300/50 min-h-screen w-full'
             onClick={handleBackdropClick}
@@ -103,7 +104,7 @@ export function ConfirmDialog({ isOpen, title, message, onConfirm, onCancel }: C
                 </div>
             </div>
         </div>
-    );
+        , document.body);
 }
 
 export default function ModalWithFocusTrap() {
