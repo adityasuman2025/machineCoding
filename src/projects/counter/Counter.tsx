@@ -77,9 +77,9 @@ export default function Counter({
         <main className="flex items-center justify-center min-h-screen bg-gray-100">
             <div
                 ref={containerRef}
-                role="region" aria-label="counter component"
-                className="flex flex-col items-center gap-6 focus:ring-1 focus:ring-blue-500"
                 tabIndex={0}
+                role="region" aria-label="counter component"
+                className="flex flex-col items-center gap-6 focus:ring-1 focus:ring-blue-300"
                 onKeyDown={handleKeyDown}
             >
                 <header className="mb-6 text-center">

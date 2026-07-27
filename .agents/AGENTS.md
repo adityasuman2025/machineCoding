@@ -16,5 +16,6 @@
     - *Properties*: `aria-labelledby`, `aria-describedby`, `aria-controls`, `aria-live` (`polite`/`assertive`), `aria-haspopup`, `aria-required`, `aria-readonly`, `aria-valuenow`, `aria-valuemin`, `aria-valuemax`, `aria-valuetext`, `aria-label`, `aria-autocomplete`, `aria-orientation`.
   - **Keyboard Navigation & Shortcuts**: Implement full keyboard support (`Tab`, `Shift+Tab`, `Escape`, `Enter`, `Space`, Arrow keys `ArrowUp`/`ArrowDown`/`ArrowLeft`/`ArrowRight`, `Home`, `End`, `PageUp`, `PageDown`), focus trapping, focus restoration on unmount, explicit `:focus-visible` focus rings, and prevent focus traps or skipped buttons (e.g. `tabIndex={0}`).
   - **Screen Reader & Inclusive Usability**: Guarantee dynamic screen reader announcements via `aria-live` regions or `sr-only` utility classes, minimum touch target sizes (44x44px), WCAG AA color contrast (minimum 4.5:1), descriptive alt text for images, and full non-mouse input support.
+  - **Proactive ARIA & Screen Reader Auditing**: Systematically audit every component during code review to check if any additional WAI-ARIA attributes, live region properties (`aria-live`, `aria-atomic`), descriptive labels (`aria-label`, `aria-labelledby`, `aria-describedby`), or widget roles are needed to make the code 100% WAI-ARIA and screen reader accessible.
 
 
