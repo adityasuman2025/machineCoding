@@ -1,22 +1,32 @@
-import { useRef, useState, type MouseEvent, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type MouseEvent, type KeyboardEvent } from "react";
 import "./StarRating.scoped.css";
 
 interface StarRatingProps {
     defaultValue?: number;
     disabled?: boolean;
     maxStars?: number;
+    autoFocus?: boolean;
     onChange?: (rating: number) => void;
 }
 export default function StarRating({
     defaultValue = 0,
     disabled = false,
     maxStars = 5,
+    autoFocus = true,
     onChange
 }: StarRatingProps) {
     const starRefs = useRef<HTMLElement[]>([]);
+
     const [rating, setRating] = useState(defaultValue || 0);
     const [hoveredRating, setHoveredRating] = useState(0);
     const activeRating = hoveredRating > 0 ? hoveredRating : rating;
+
+    useEffect(() => {
+        if (autoFocus && !disabled) {
+            const targetIdx = rating > 0 ? rating - 1 : 0;
+            starRefs.current[targetIdx]?.focus();
+        }
+    }, [autoFocus, disabled]);
 
     function updateRating(_rating: number) {
         setRating(_rating);

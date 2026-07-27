@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useState, type MouseEvent, type KeyboardEvent } from 'react';
+import React, { memo, useMemo, useState, type MouseEvent, type KeyboardEvent, useEffect, useRef } from 'react';
 
 /*
     Machine Coding Problem: Area Selector / Drag Box Selection
@@ -18,7 +18,7 @@ interface CellProps {
 function Cell({ rowIdx, colIdx, isSelected = false }: CellProps) {
     return (
         <div
-            role='listitem'
+            role='gridcell'
             aria-selected={isSelected}
             aria-label={`cell with row ${rowIdx + 1} & column ${colIdx + 1} ${isSelected ? "is selected" : ""}`}
             tabIndex={rowIdx === 0 && colIdx === 0 ? 0 : -1}
@@ -47,8 +47,14 @@ interface SelectionData {
     endColIdx: number,
 }
 
-export default function AreaSelector() {
+export default function AreaSelector({ autoFocus = true }: { autoFocus?: boolean }) {
+    const containerRef = useRef<HTMLDivElement>(null);
+
     const [selection, setSelection] = useState<SelectionData | null>(null);
+
+    useEffect(() => {
+        if (autoFocus) containerRef.current?.focus();
+    }, [autoFocus])
 
     const boundary = useMemo(() => {
         if (!selection) return null;
@@ -127,7 +133,7 @@ export default function AreaSelector() {
     }
 
     return (
-        <main className="flex flex-col items-center min-h-screen bg-gray-50 select-none">
+        <main className="flex flex-col items-center min-h-screen bg-gray-50">
             <header className="mb-6 text-center">
                 <h1 className="text-3xl font-bold text-gray-900">Area Selector</h1>
                 <p className="text-sm text-gray-600 mt-1">
@@ -135,37 +141,44 @@ export default function AreaSelector() {
                 </p>
             </header>
 
-            <div className='sr-only' aria-live='polite'>
-                {boundary
-                    ? `Selected area from Row ${boundary.minRow + 1}, Column ${boundary.minCol + 1} to Row ${boundary.maxRow + 1}, Column ${boundary.maxCol + 1}`
-                    : ''}
-            </div>
-
-            <section
-                role='list'
-                className={`w-fit grid border-1 box-border`}
-                style={{
-                    gridTemplateColumns: `repeat(${columns},1fr)`,
-                    gridTemplateRows: `repeat(${rows},1fr)`,
-                }}
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={reset}
-                onMouseLeave={reset}
+            <div
+                ref={containerRef}
+                tabIndex={0}
+                role="region" aria-label='area selector component'
+                className='focus:ring-1 focus:ring-blue-300'
                 onKeyDown={handleKeyDown}
             >
-                {
-                    Array.from({ length: rows }, (_, rowIdx) => (
-                        Array.from({ length: columns }, (_, colIdx) => (
-                            <MemoisedCell
-                                key={`${rowIdx}_${colIdx}`}
-                                rowIdx={rowIdx} colIdx={colIdx}
-                                isSelected={isSelected(rowIdx, colIdx)}
-                            />
+                <div className='sr-only' aria-live='polite' aria-atomic="true">
+                    {boundary
+                        ? `Selected area from Row ${boundary.minRow + 1}, Column ${boundary.minCol + 1} to Row ${boundary.maxRow + 1}, Column ${boundary.maxCol + 1}`
+                        : ''}
+                </div>
+
+                <section
+                    role='grid'
+                    className={`w-fit grid border-1 box-border`}
+                    style={{
+                        gridTemplateColumns: `repeat(${columns},1fr)`,
+                        gridTemplateRows: `repeat(${rows},1fr)`,
+                    }}
+                    onMouseDown={handleMouseDown}
+                    onMouseMove={handleMouseMove}
+                    onMouseUp={reset}
+                    onMouseLeave={reset}
+                >
+                    {
+                        Array.from({ length: rows }, (_, rowIdx) => (
+                            Array.from({ length: columns }, (_, colIdx) => (
+                                <MemoisedCell
+                                    key={`${rowIdx}_${colIdx}`}
+                                    rowIdx={rowIdx} colIdx={colIdx}
+                                    isSelected={isSelected(rowIdx, colIdx)}
+                                />
+                            ))
                         ))
-                    ))
-                }
-            </section>
+                    }
+                </section>
+            </div>
         </main>
     );
 }
