@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useRef, useState } from "react";
+import React, { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 
 /*
     Machine Coding Problem: Infinite Scroll
@@ -60,19 +60,23 @@ function InfiniteScroller({
     )
 }
 
+function randomItems() {
+    return Array.from({ length: 10 }, () => crypto.randomUUID());
+}
+
 export default function InfiniteScroll() {
     const [isLoading, setIsLoading] = useState(false);
-    const [items, setItems] = useState<string[]>(Array.from({ length: 10 }, () => crypto.randomUUID()));
+    const [items, setItems] = useState<string[]>(randomItems());
 
-    function handleLoadMore() {
+    const handleLoadMore = useCallback(() => {
         console.log("handleLoadMore");
 
         setIsLoading(true);
         setTimeout(() => {
-            setItems(prev => ([...prev, ...Array.from({ length: 10 }, () => crypto.randomUUID())]))
+            setItems(prev => ([...prev, ...randomItems()]))
             setIsLoading(false);
         }, 1000);
-    }
+    }, []);
 
     return (
         <main >
