@@ -1,4 +1,4 @@
-import { useState, useCallback, memo, SyntheticEvent } from "react";
+import { useState, useCallback, memo, type SubmitEvent } from "react";
 import "./DiceRoll.scoped.css";
 
 function getRandomNo(start, end) {
@@ -33,7 +33,7 @@ const MemoisedDice = memo(Dice);
 export default function DiceRoll() {
     const [dices, setDices] = useState<number[]>([]);
 
-    const handleSubmit = useCallback((e: SyntheticEvent<HTMLFormElement>) => {
+    const handleSubmit = useCallback((e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const formData = new FormData(e.currentTarget);

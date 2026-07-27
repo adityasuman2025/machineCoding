@@ -25,6 +25,7 @@ import ModalWithFocusTrap from "./projects/modalWithFocusTrap/ModalWithFocusTrap
 import Todos from "./projects/todos/Todos";
 import AreaSelector from "./projects/areaSelector/AreaSelector";
 import Calculator from "./projects/calculator/Calculator";
+import Counter from "./projects/counter/Counter";
 
 const ESSENTIAL_PROJECTS = [
     { name: "Auto Complete", path: "/auto-complete" },
@@ -49,6 +50,7 @@ const ESSENTIAL_PROJECTS = [
 
 const OTHER_PROJECTS = [
     { name: "Calculator", path: "/calculator" },
+    { name: "Counter", path: "/counter" },
     { name: "Area Selector", path: "/area-selector" },
     { name: "Auto Complete 2", path: "/auto-complete-2" },
     { name: "Dynamic Layouting", path: "/dynamic-layouting" },
@@ -164,6 +166,7 @@ export default function App() {
                 <Route path="/todos" element={<Todos />} />
                 <Route path="/area-selector" element={<AreaSelector />} />
                 <Route path="/calculator" element={<Calculator />} />
+                <Route path="/counter" element={<Counter />} />
             </Routes>
         </Router>
     );

@@ -1,4 +1,4 @@
-import React, { memo, type SyntheticEvent, type KeyboardEvent, useCallback, useRef, useState } from 'react';
+import React, { memo, type SubmitEvent, type KeyboardEvent, useCallback, useRef, useState } from 'react';
 
 interface ToDoItemProps {
     id: string;
@@ -32,10 +32,10 @@ function TodoItem({
         if (value) saveEdit(value);
     }
 
-    function handleEditSubmit(e: SyntheticEvent<HTMLFormElement>) {
+    function handleEditSubmit(e: SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
 
-        const formData = new FormData(e.target as HTMLFormElement);
+        const formData = new FormData(e.target);
         const value = (formData.get("edit-input") as string).trim();
         if (value) saveEdit(value);
     }
@@ -123,10 +123,10 @@ export default function Todos() {
         }
     }
 
-    function handleSubmit(e: SyntheticEvent<HTMLFormElement>) {
+    function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
 
-        const formData = new FormData(e.target as HTMLFormElement);
+        const formData = new FormData(e.target);
         const val = (formData.get("input") as string)?.trim();
         if (val) {
             setTodos(prev => [...prev, { todo: val, id: crypto.randomUUID(), isDone: false }]);
