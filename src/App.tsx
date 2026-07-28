@@ -28,6 +28,7 @@ import Calculator from "./projects/calculator/Calculator";
 import Counter from "./projects/counter/Counter";
 import InfiniteScroll from "./projects/infiniteScroll/InfiniteScroll";
 import SnakeGame from "./projects/snakeGame/SnakeGame";
+import ToastProject from "./projects/toast/ToastProject";
 
 const ESSENTIAL_PROJECTS = [
     { name: "Auto Complete", path: "/auto-complete" },
@@ -55,6 +56,7 @@ const OTHER_PROJECTS = [
     { name: "Counter", path: "/counter" },
     { name: "Infinite Scroll", path: "/infinite-scroll" },
     { name: "Snake Game", path: "/snake-game" },
+    { name: "Toast", path: "/toast" },
     { name: "Area Selector", path: "/area-selector" },
     { name: "Auto Complete 2", path: "/auto-complete-2" },
     { name: "Dynamic Layouting", path: "/dynamic-layouting" },
@@ -173,6 +175,7 @@ export default function App() {
                 <Route path="/counter" element={<Counter />} />
                 <Route path="/infinite-scroll" element={<InfiniteScroll />} />
                 <Route path="/snake-game" element={<SnakeGame />} />
+                <Route path="/toast" element={<ToastProject />} />
             </Routes>
         </Router>
     );

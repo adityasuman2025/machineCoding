@@ -19,5 +19,3 @@
   - **Proactive ARIA & Screen Reader Auditing**: Systematically audit every component during code review to check if any additional WAI-ARIA attributes, live region properties (`aria-live`, `aria-atomic`), descriptive labels (`aria-label`, `aria-labelledby`, `aria-describedby`), or widget roles are needed to make the code 100% WAI-ARIA and screen reader accessible.
 - **Strict Re-Render Auditing & Performance Benchmark**: Systematically audit every component and child sub-component for unnecessary re-renders. Enforce component extraction, `React.memo`, `useMemo` for derived collections (`Set`/`Map`), `useCallback` for event handlers, and primitive prop passing to prune rendering lifecycles down to minimum required DOM updates.
 - **Comprehensive Market Standards & Best Practices Audit**: Continuously benchmark architecture, implementation, state management, WAI-ARIA accessibility, and keyboard shortcuts against modern market standards (Dan Abramov hooks, production UI design systems, W3C WAI-ARIA specs).
-
-
