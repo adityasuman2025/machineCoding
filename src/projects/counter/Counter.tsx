@@ -17,6 +17,16 @@ interface CounterProps {
     defaultStep?: number;
     autoFocus?: boolean;
 }
+function useAutoFocus(autoFocus: boolean = false) {
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (autoFocus) containerRef.current?.focus();
+    }, [autoFocus]);
+
+    return containerRef;
+}
+
 export default function Counter({
     initialValue = 0,
     min = -100,
@@ -24,14 +34,10 @@ export default function Counter({
     defaultStep = 1,
     autoFocus = true,
 }: CounterProps) {
-    const containerRef = useRef<HTMLDivElement>(null);
+    const containerRef = useAutoFocus(autoFocus);
 
     const [step, setStep] = useState<string>(String(defaultStep));
     const [value, setValue] = useState<number>(initialValue);
-
-    useEffect(() => {
-        if (autoFocus) containerRef.current?.focus();
-    }, [autoFocus]);
 
     function handleStepChange(e: ChangeEvent<HTMLInputElement>) {
         const val = (e.target.value).trim();

@@ -29,6 +29,8 @@ import Counter from "./projects/counter/Counter";
 import InfiniteScroll from "./projects/infiniteScroll/InfiniteScroll";
 import SnakeGame from "./projects/snakeGame/SnakeGame";
 import ToastProject from "./projects/toast/ToastProject";
+import Tagging from "./projects/tagging/Tagging";
+import Dropdown from "./projects/dropdown/Dropdown";
 
 const ESSENTIAL_PROJECTS = [
     { name: "Auto Complete", path: "/auto-complete" },
@@ -57,6 +59,8 @@ const OTHER_PROJECTS = [
     { name: "Infinite Scroll", path: "/infinite-scroll" },
     { name: "Snake Game", path: "/snake-game" },
     { name: "Toast", path: "/toast" },
+    { name: "Tagging", path: "/tagging" },
+    { name: "Dropdown", path: "/dropdown" },
     { name: "Area Selector", path: "/area-selector" },
     { name: "Auto Complete 2", path: "/auto-complete-2" },
     { name: "Dynamic Layouting", path: "/dynamic-layouting" },
@@ -176,6 +180,8 @@ export default function App() {
                 <Route path="/infinite-scroll" element={<InfiniteScroll />} />
                 <Route path="/snake-game" element={<SnakeGame />} />
                 <Route path="/toast" element={<ToastProject />} />
+                <Route path="/tagging" element={<Tagging />} />
+                <Route path="/dropdown" element={<Dropdown />} />
             </Routes>
         </Router>
     );

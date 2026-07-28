@@ -47,14 +47,20 @@ interface SelectionData {
     endColIdx: number,
 }
 
-export default function AreaSelector({ autoFocus = true }: { autoFocus?: boolean }) {
+function useAutoFocus(autoFocus: boolean = false) {
     const containerRef = useRef<HTMLDivElement>(null);
-
-    const [selection, setSelection] = useState<SelectionData | null>(null);
 
     useEffect(() => {
         if (autoFocus) containerRef.current?.focus();
-    }, [autoFocus])
+    }, [autoFocus]);
+
+    return containerRef;
+}
+
+export default function AreaSelector({ autoFocus = true }: { autoFocus?: boolean }) {
+    const containerRef = useAutoFocus(autoFocus);
+
+    const [selection, setSelection] = useState<SelectionData | null>(null);
 
     const boundary = useMemo(() => {
         if (!selection) return null;

@@ -62,13 +62,19 @@ function calculate(expr: string) {
     return String(result.toFixed(2));
 }
 
-export default function Calculator({ autoFocus = true }: { autoFocus?: boolean }) {
+function useAutoFocus(autoFocus: boolean = false) {
     const containerRef = useRef<HTMLDivElement>(null);
-    const [display, setDisplay] = useState<string>("");
 
     useEffect(() => {
         if (autoFocus) containerRef.current?.focus();
     }, [autoFocus]);
+
+    return containerRef;
+}
+
+export default function Calculator({ autoFocus = true }: { autoFocus?: boolean }) {
+    const containerRef = useAutoFocus(autoFocus);
+    const [display, setDisplay] = useState<string>("");
 
     function handleClick(e: MouseEvent<HTMLDivElement>) {
         const id = (e.target as HTMLElement).dataset.id;
