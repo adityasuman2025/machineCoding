@@ -1,5 +1,4 @@
-import React, { useRef, useEffect, useState, type ChangeEvent, type MouseEvent, type KeyboardEvent } from "react";
-import { createPortal } from "react-dom";
+import React, { useRef, useEffect, useState, type ChangeEvent, type MouseEvent, type KeyboardEvent, memo, useCallback, useMemo } from "react";
 
 /*
     Machine Coding Problem: Accessible Select / Multi-Select Dropdown
@@ -11,18 +10,18 @@ import { createPortal } from "react-dom";
     5. WAI-ARIA accessibility (role="combobox", role="listbox", role="option", aria-expanded).
 */
 
-interface SelectProps {
-    value: string[],
-    onChange: (values: string[]) => void
-    multi?: boolean,
-    options: string[],
-}
 function filterOptions(options: string[], query: string): string[] {
     const val = query.trim().toLowerCase();
     if (!val) return options;
     return options.filter(item => item.toLowerCase().includes(val));
 }
 
+interface SelectProps {
+    value: string[],
+    onChange: (values: string[]) => void
+    multi?: boolean,
+    options: string[],
+}
 function Select({
     value,
     onChange,
@@ -33,7 +32,8 @@ function Select({
     const inputRef = useRef<HTMLInputElement | null>(null);
 
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-    const [results, setResults] = useState<string[]>(options);
+    const [searchQry, setSearchQry] = useState<string>("");
+    const results = useMemo(() => filterOptions(options, searchQry), [searchQry, options])
 
     useEffect(() => {
         function handleClickOutside(e: globalThis.MouseEvent) {
@@ -82,16 +82,19 @@ function Select({
                 const val = activeElement?.getAttribute("data-value");
                 if (val) handleChooseOption(val);
             }
+        } else if (key === "Backspace") {
+            if (searchQry === "" && value.length > 0) onChange(value.slice(0, -1));
         }
     }
 
     function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
-        setResults(filterOptions(options, e.target.value));
+        setSearchQry(e.target.value)
     }
 
     function handleOptionClick(e: MouseEvent<HTMLElement>, option: string) {
         e.stopPropagation();
         handleChooseOption(option);
+        setSearchQry("");
     }
 
     function handleChooseOption(option: string) {
@@ -142,6 +145,7 @@ function Select({
                         <input
                             aria-label="search for options"
                             ref={inputRef}
+                            value={searchQry}
                             className="min-w-[4rem] w-0 flex-1 text-sm border-none focus:outline-none"
                             type="text"
                             onChange={handleInputChange}
@@ -174,7 +178,7 @@ function Select({
                                     const isSelected = value.includes(opt)
                                     return (
                                         <li
-                                            tabIndex={isSelected ? 0 : -1}
+                                            tabIndex={0}
                                             role="option"
                                             data-value={opt}
                                             aria-selected={isSelected}
@@ -198,11 +202,16 @@ function Select({
         </div>
     )
 }
+const MemoisedSelect = memo(Select);
 
 const OPTIONS = ["react", "next", "typescript", "javascript", "tailwind css", "html", "css", "node", "express", "mongo db"];
 
 export default function Dropdown() {
     const [selected, setSelected] = useState<string[]>([]);
+
+    const handleChange = useCallback((values: string[]) => {
+        setSelected(values);
+    }, []);
 
     return (
         <main className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-6">
@@ -216,10 +225,10 @@ export default function Dropdown() {
                 className="flex flex-col items-center gap-4"
             >
                 <p>select you skills</p>
-                <Select
+                <MemoisedSelect
                     multi={true}
                     value={selected}
-                    onChange={values => setSelected(values)}
+                    onChange={handleChange}
                     options={OPTIONS}
                 />
             </div>
