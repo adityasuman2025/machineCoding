@@ -31,6 +31,7 @@ import SnakeGame from "./projects/snakeGame/SnakeGame";
 import ToastProject from "./projects/toast/ToastProject";
 import Tagging from "./projects/tagging/Tagging";
 import Dropdown from "./projects/dropdown/Dropdown";
+import PubSubParent from "./projects/pubSub/PubSubParent";
 
 const ESSENTIAL_PROJECTS = [
     { name: "Auto Complete", path: "/auto-complete" },
@@ -51,6 +52,7 @@ const ESSENTIAL_PROJECTS = [
     { name: "Compound Component", path: "/compound-comp" },
     { name: "Modal With Focus Trap", path: "/modal-with-focus-trap" },
     { name: "Todos", path: "/todos" },
+    { name: "Pub Sub", path: "/pub-sub" },
 ];
 
 const OTHER_PROJECTS = [
@@ -182,6 +184,7 @@ export default function App() {
                 <Route path="/toast" element={<ToastProject />} />
                 <Route path="/tagging" element={<Tagging />} />
                 <Route path="/dropdown" element={<Dropdown />} />
+                <Route path="/pub-sub" element={<PubSubParent />} />
             </Routes>
         </Router>
     );
