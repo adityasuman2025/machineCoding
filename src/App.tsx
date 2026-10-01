@@ -33,6 +33,7 @@ import Tagging from "./projects/tagging/Tagging";
 import Dropdown from "./projects/dropdown/Dropdown";
 import PubSubParent from "./projects/pubSub/PubSubParent";
 import UseFetchComp from "./projects/useFetch/Comp";
+import MultiLevelSelect from "./projects/multiLevelSelect/MultiLevelSelect";
 
 const ESSENTIAL_PROJECTS = [
     { name: "Auto Complete", path: "/auto-complete" },
@@ -55,6 +56,7 @@ const ESSENTIAL_PROJECTS = [
     { name: "Todos", path: "/todos" },
     { name: "Pub Sub", path: "/pub-sub" },
     { name: "useFetch", path: "/use-fetch" },
+    { name: "Multi Level Select", path: "/multi-level-select" },
 ];
 
 const OTHER_PROJECTS = [
@@ -188,6 +190,7 @@ export default function App() {
                 <Route path="/dropdown" element={<Dropdown />} />
                 <Route path="/pub-sub" element={<PubSubParent />} />
                 <Route path="/use-fetch" element={<UseFetchComp />} />
+                <Route path="/multi-level-select" element={<MultiLevelSelect />} />
             </Routes>
         </Router>
     );
